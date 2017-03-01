@@ -104,8 +104,10 @@ void iRobotCreate::doSensorReadings(void *param, ProcessDataFromCreate callback)
         {
             printf("pruser %i\n",k);
         }
-        end = begin = std::chrono::high_resolution_clock::now();
-        std::this_thread::sleep_for(std::chrono::milliseconds(100- (end-begin).count()));
+        end = std::chrono::high_resolution_clock::now();
+        int toSleep = 110- (end-begin).count();
+        if(toSleep > 0)
+            std::this_thread::sleep_for(std::chrono::milliseconds(toSleep));
     }
 }
 

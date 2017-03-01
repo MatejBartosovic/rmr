@@ -37,7 +37,8 @@ void PositionRegulator2dLinear::update(Position2d currentPos) {
         //turn in place
         if(fabs(Eangular) > 0.15){
             cmd.linear = 0;
-            cmd.angular = 0.05 * fabs(Eangular)/Eangular;
+            //cmd.angular = 0.05 * fabs(Eangular)/Eangular;
+            cmd.angular = 0.4;
             printf("Eangular = %lf\n",Eangular);
             angularCount++;
             cmd.commandType = Command::LinearAngular;
@@ -45,7 +46,7 @@ void PositionRegulator2dLinear::update(Position2d currentPos) {
         }
 
         //transform current vel to world frame
-        double currentVelX = cos(currentPos.yaw) * velCmd;
+        /*double currentVelX = cos(currentPos.yaw) * velCmd;
         double currentVelY = sin(currentPos.yaw) * velCmd;
 
         //calculate goal velocity in each axis
@@ -60,7 +61,22 @@ void PositionRegulator2dLinear::update(Position2d currentPos) {
         cmd.angular = ( eVelY/eVelX -1) * angularP;
         cmd.linear = velCmd;
         linearCount++;
+
+        cmd.commandType = Command::LinearAngular;*/
+        double Pa = 0.2;
+        double Pl = 0.5;
+        cmd.angular = Eangular*Pa;
+        cmd.linear = Elinear *Pl;
         cmd.commandType = Command::LinearAngular;
+
+        if (fabs(cmd.angular) > 0.5)
+            cmd.angular = 0.5 * (cmd.angular/fabs(cmd.angular));
+        if (fabs(cmd.linear) > 0.3)
+            cmd.linear = 0.3 * (cmd.linear/fabs(cmd.linear));
+
+        if (fabs(cmd.linear) < 0.05)
+            cmd.linear = 0.05 * (cmd.linear/fabs(cmd.linear));
+
     }
 
 }

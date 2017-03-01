@@ -4,12 +4,14 @@
 
 #include "odometry.h"
 #include <math.h>
+#include <stdio.h>
 
 Odometry::Odometry() : pos() {
 
 }
 
 void Odometry::update(double linear, double angular) {
+    printf("odometry update linear = %lf angular = %lf\n",linear,angular);
     if (fabs(angular) < 1e-6)
         integrateRungeKutta2(linear, angular);
     else

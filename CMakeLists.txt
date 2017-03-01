@@ -26,7 +26,6 @@ aux_source_directory(. SRC_LIST)
 
 find_package( Qt4 REQUIRED )
 find_package(Threads REQUIRED)
-find_package(Boost REQUIRED)
 
 include( ${QT_USE_FILE} )
 add_definitions( ${QT_DEFINITIONS} )

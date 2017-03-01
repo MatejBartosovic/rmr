@@ -10,10 +10,6 @@
 #include "string.h"
 
 #include <QWidget>
-
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
-
 typedef unsigned short WORD;
 typedef unsigned int DWORD;
 
