@@ -14,6 +14,7 @@ public:
     void update(Position2d currentPos);
     void setAngularP(double p);
     void setLinearP(double p);
+    void cancelGoal();
 protected:
     Command &cmd;
     double velCmd;

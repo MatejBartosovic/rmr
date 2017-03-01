@@ -11,7 +11,7 @@ Odometry::Odometry() : pos() {
 }
 
 void Odometry::update(double linear, double angular) {
-    printf("odometry update linear = %lf angular = %lf\n",linear,angular);
+    //printf("odometry update linear = %lf angular = %lf\n",linear,angular);
     if (fabs(angular) < 1e-6)
         integrateRungeKutta2(linear, angular);
     else
@@ -19,7 +19,7 @@ void Odometry::update(double linear, double angular) {
         /// Exact integration (should solve problems when angular is zero):
         const double heading_old = pos.yaw;
         const double r = linear/angular;
-        pos.yaw += angular;
+        integrateYaw(angular);
         pos.x       +=  r * (sin(pos.yaw) - sin(heading_old));
         pos.y       += -r * (cos(pos.yaw) - cos(heading_old));
     }
@@ -32,7 +32,7 @@ void Odometry::integrateRungeKutta2(double linear, double angular)
     /// Runge-Kutta 2nd order integration:
     pos.x       += linear * cos(direction);
     pos.y       += linear * sin(direction);
-    pos.yaw += angular;
+    integrateYaw(angular);
 }
 
 double Odometry::getX() {
@@ -49,4 +49,16 @@ double Odometry::getYaw() {
 
 Position2d Odometry::getPos() {
     return pos;
+}
+
+void Odometry::integrateYaw(double angular){
+    pos.yaw +=angular;
+    if(pos.yaw >M_PI){
+        double dif = pos.yaw - M_PI;
+        pos.yaw = -M_PI + dif;
+    }
+    else if (pos.yaw < -M_PI){
+        double dif = pos.yaw + M_PI;
+        pos.yaw = M_PI  + dif;
+    }
 }

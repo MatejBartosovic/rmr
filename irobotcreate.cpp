@@ -88,7 +88,7 @@ void iRobotCreate::doSensorReadings(void *param, ProcessDataFromCreate callback)
     {
         begin = std::chrono::high_resolution_clock::now();
         CreateSensors sensor_struct;
-        printf("vlakno\n");
+        //printf("vlakno\n");
         SentToCreate(OI_SENSORS,(unsigned char)0x06);
         usleep(100*1000);
         int k=ReceivePacketFromCreate(sensor_struct,0x06);

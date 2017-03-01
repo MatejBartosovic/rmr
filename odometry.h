@@ -18,6 +18,7 @@ protected:
     Position2d pos;
 private:
     void integrateRungeKutta2(double linear, double angular);
+    void integrateYaw(double angular);
 };
 
 
