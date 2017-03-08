@@ -14,6 +14,9 @@ public:
         this->goal = goal;
         goalActive = true;
     }
+    virtual  void cancelGoal(){
+        goalActive = false;
+    }
     virtual void update(Position2d currentPos) = 0;
 protected:
     Position2d goal;

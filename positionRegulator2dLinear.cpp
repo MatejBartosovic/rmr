@@ -6,7 +6,7 @@
 #include <math.h>
 #include <stdio.h>
 
-PositionRegulator2dLinear::PositionRegulator2dLinear(Command &cmd) : cmd(cmd), velCmd(0.025),angularCount(0),linearCount(0){
+PositionRegulator2dLinear::PositionRegulator2dLinear(Command &cmd) : cmd(cmd), velCmd(0.025),angularCount(0),linearCount(0),Pa(0.2),Pl(0.5){
 
 }
 
@@ -63,8 +63,6 @@ void PositionRegulator2dLinear::update(Position2d currentPos) {
         linearCount++;
 
         cmd.commandType = Command::LinearAngular;*/
-        double Pa = 0.2;
-        double Pl = 0.5;
         cmd.angular = Eangular*Pa;
         cmd.linear = Elinear *Pl;
         cmd.commandType = Command::LinearAngular;
@@ -80,3 +78,12 @@ void PositionRegulator2dLinear::update(Position2d currentPos) {
     }
 
 }
+
+void PositionRegulator2dLinear::setAngularP(double p) {
+    Pa = p;
+}
+
+void PositionRegulator2dLinear::setLinearP(double p) {
+    Pl = p;
+}
+

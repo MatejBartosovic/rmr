@@ -20,6 +20,10 @@ signals:
 public slots:
     void linearSpinBoxChange(double val);
     void angularSpinBoxChange(double val);
+    void setAngularP(double p);
+    void setLinearP(double p);
+    void setNewGoal();
+    void cancelGoal();
     void startTestButtonCallback();
 public:
 
