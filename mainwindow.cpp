@@ -10,7 +10,7 @@
  * */
 iRobotCreate robot;
 Command cmd;
-DifferencialDrive difDrive(cmd,0.275);
+DifferencialDrive difDrive(cmd,0.275,0.1);
 PositionRegulator2dLinear regulator2d(cmd);
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -62,7 +62,7 @@ int MainWindow::demoCallback(CreateSensors inputData,void *ioPointer)
     difDrive.updateCommand();
 
     //set speed to robot
-    robot.moveMotors((int)(cmd.leftVel*1000),(int)(cmd.rightVel*1000));
+    robot.moveMotors((int)(cmd.rightVel*1000),(int)(cmd.leftVel*1000));
 
 }
 void MainWindow::on_pushButton_clicked()
@@ -100,7 +100,7 @@ void MainWindow::runTest(){
         regulator2d.update(difDrive.getPos());
         difDrive.updateCommand();
         //printf("linear = %lf, angular = %lf \n",cmd.linear,cmd.angular);
-        //printf("left vel = %lf, right vel = %lf \n",cmd.leftVel*1000,cmd.rightVel*1000);
+        printf("left vel = %lf, right vel = %lf \n",cmd.leftVel*1000,cmd.rightVel*1000);
         usleep(100000);
     }
 }

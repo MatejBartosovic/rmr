@@ -8,16 +8,16 @@
 
 #include "odometry.h"
 #include "irobotcreate.h"
-
+#include "LimitInterface.h"
 
 class DifferencialDrive : public Odometry{
 public:
-    DifferencialDrive(Command &cmd, double ws);
+    DifferencialDrive(Command &cmd, double ws, double acc);
     void updateCommand();
 protected:
     Command &cmd;
     double ws;
-    double wr;
+    LimitInterface limiter;
 private:
 
 };

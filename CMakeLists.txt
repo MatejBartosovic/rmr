@@ -8,7 +8,8 @@ set ( SOURCES
  odometry.cpp
  DifferencialDrive.cpp
         positionRegulator2dCircular.cpp
-        positionRegulator2dLinear.cpp)
+        positionRegulator2dLinear.cpp
+        LimitInterface.cpp)
 
 set ( MY_HEADERS
  mainwindow.h
@@ -16,7 +17,10 @@ set ( MY_HEADERS
  odometry.h
  DifferencialDrive.h
  regulator.h
-        positionRegulator2dCircular.h types.h positionRegulator2dLinear.h)
+        positionRegulator2dCircular.h
+        types.h
+        positionRegulator2dLinear.h
+        LimitInterface.h)
 
 set ( UIS
  mainwindow.ui
