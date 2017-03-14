@@ -57,7 +57,7 @@ int MainWindow::demoCallback(CreateSensors inputData,void *ioPointer)
 
     //calculate odometry
 
-    difDrive.update((double)inputData.Distance/1000.0,-(double)inputData.Angle/180.0*M_PI);
+    difDrive.update((double)inputData.Distance/1000.0,(double)inputData.Angle/180.0*M_PI);
 
     regulator2d.update(difDrive.getPos());
     //update command

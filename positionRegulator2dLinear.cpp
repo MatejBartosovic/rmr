@@ -16,14 +16,14 @@ void PositionRegulator2dLinear::update(Position2d currentPos) {
         double Ex = goal.x - currentPos.x;
         double Ey = goal.y - currentPos.y;
         double Elinear  = sqrt (pow(Ex,2) + pow(Ey,2));
-        double goalAngular = atan2(Ey,Ex);
+        double goalAngular = atan2(Ex,Ey);
         double Eangular = goalAngular - currentPos.yaw;
 
         /*
          * pi/2 a -pi/2 boarder
          * */
-        if(Eangular > M_PI_2)
-            Eangular = - (M_PI-Eangular);
+       //if(Eangular > M_PI_2)
+         //   Eangular = - (M_PI-Eangular);
 
         printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
         printf("pos x = %lf, posy = %lf yaw = %lf goal yaw = %lf angular error %lf\n",currentPos.x,currentPos.y,currentPos.yaw,goalAngular,Eangular);
@@ -46,7 +46,7 @@ void PositionRegulator2dLinear::update(Position2d currentPos) {
         if( absEangular > 0.15){
             cmd.linear = 0;
             //cmd.angular = 0.05 * fabs(Eangular)/Eangular;
-            cmd.angular = 0.4 * absEangular/Eangular;
+            cmd.angular = 0.8 * absEangular/Eangular;
             printf("Eangular = %lf\n",Eangular);
             angularCount++;
             cmd.commandType = Command::LinearAngular;

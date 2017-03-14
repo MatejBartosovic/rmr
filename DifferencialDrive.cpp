@@ -10,6 +10,7 @@ DifferencialDrive::DifferencialDrive(Command &cmd, double ws,double acc) : cmd(c
 
 void DifferencialDrive::updateCommand() {
     //if(cmd.commandType == Command::LinearAngular){
+    printf("Angular: %lf\n", cmd.angular);
         cmd.leftVel  = (cmd.linear - cmd.angular * ws / 2.0);
         cmd.rightVel = (cmd.linear + cmd.angular * ws / 2.0);
         cmd.radius = cmd.linear / cmd.angular;

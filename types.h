@@ -34,7 +34,7 @@ struct Command
     double radius;
     CommandType commandType;
 
-    Command() : linear(0.0), angular(0.0), leftVel(0), rightVel(0),radius(0), commandType(Command::Motors) {}
+    Command() : linear(0.0), angular(0.0), leftVel(0), rightVel(0), radius(0), commandType(Command::Motors) {}
 };
 
 
