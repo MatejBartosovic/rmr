@@ -24,6 +24,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->linearSpinBox->setRange(-0.5,0.5);
     ui->angularSpinBox->setSingleStep(0.05);
     ui->angularSpinBox->setRange(-0.5,0.5);
+    ui->XSpinBox->setRange(-10,10);
+    ui->YSpinBox->setRange(-10,10);
 
     connect(ui->linearSpinBox,SIGNAL(valueChanged(double)),this,SLOT(linearSpinBoxChange(double)));
     connect(ui->angularSpinBox,SIGNAL(valueChanged(double)),this,SLOT(angularSpinBoxChange(double)));
@@ -100,7 +102,7 @@ void MainWindow::runTest(){
         regulator2d.update(difDrive.getPos());
         difDrive.updateCommand();
         //printf("linear = %lf, angular = %lf \n",cmd.linear,cmd.angular);
-        printf("left vel = %lf, right vel = %lf \n",cmd.leftVel*1000,cmd.rightVel*1000);
+        //printf("left vel = %lf, right vel = %lf \n",cmd.leftVel*1000,cmd.rightVel*1000);
         usleep(100000);
     }
 }

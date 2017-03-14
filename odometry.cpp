@@ -51,6 +51,9 @@ Position2d Odometry::getPos() {
     return pos;
 }
 
+/*
+        * pi/2 a -pi/2 boarder function to integrate yaw
+        * */
 void Odometry::integrateYaw(double angular){
     pos.yaw +=angular;
     if(pos.yaw >M_PI){
