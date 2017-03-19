@@ -7,229 +7,132 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>300</height>
+    <height>321</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QPushButton" name="pushButton">
-    <property name="geometry">
-     <rect>
-      <x>270</x>
-      <y>10</y>
-      <width>101</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>connect</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>30</y>
-      <width>68</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>TextLabel</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton_2">
-    <property name="geometry">
-     <rect>
-      <x>270</x>
-      <y>70</y>
-      <width>101</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>move</string>
-    </property>
-   </widget>
-   <widget class="QDoubleSpinBox" name="linearSpinBox">
-    <property name="geometry">
-     <rect>
-      <x>270</x>
-      <y>130</y>
-      <width>69</width>
-      <height>27</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QDoubleSpinBox" name="angularSpinBox">
-    <property name="geometry">
-     <rect>
-      <x>270</x>
-      <y>180</y>
-      <width>69</width>
-      <height>27</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="linearLabel">
-    <property name="geometry">
-     <rect>
-      <x>270</x>
-      <y>110</y>
-      <width>67</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Linear</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="angularLabel">
-    <property name="geometry">
-     <rect>
-      <x>270</x>
-      <y>160</y>
-      <width>67</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Angular</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="startTestPushButton">
-    <property name="geometry">
-     <rect>
-      <x>150</x>
-      <y>10</y>
-      <width>101</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Start Test</string>
-    </property>
-   </widget>
-   <widget class="QDoubleSpinBox" name="XSpinBox">
-    <property name="geometry">
-     <rect>
-      <x>50</x>
-      <y>50</y>
-      <width>69</width>
-      <height>27</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QDoubleSpinBox" name="YSpinBox">
-    <property name="geometry">
-     <rect>
-      <x>50</x>
-      <y>90</y>
-      <width>69</width>
-      <height>27</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_2">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>60</y>
-      <width>67</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>X</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_3">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>90</y>
-      <width>67</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Y</string>
-    </property>
-   </widget>
-   <widget class="QDoubleSpinBox" name="angularPSpinBox">
-    <property name="geometry">
-     <rect>
-      <x>80</x>
-      <y>130</y>
-      <width>69</width>
-      <height>27</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QDoubleSpinBox" name="linearPSpinBox">
-    <property name="geometry">
-     <rect>
-      <x>80</x>
-      <y>180</y>
-      <width>69</width>
-      <height>27</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_4">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>130</y>
-      <width>67</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>angular P</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_5">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>180</y>
-      <width>67</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>linear P</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="setNewGoalButton">
-    <property name="geometry">
-     <rect>
-      <x>160</x>
-      <y>130</y>
-      <width>99</width>
-      <height>27</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Set goal</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="cancelGoalButton">
-    <property name="geometry">
-     <rect>
-      <x>160</x>
-      <y>180</y>
-      <width>99</width>
-      <height>27</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Cancel goal</string>
-    </property>
-   </widget>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_4">
+    <item>
+     <layout class="QVBoxLayout" name="spin_boxes">
+      <item>
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>X</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QDoubleSpinBox" name="XSpinBox"/>
+      </item>
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Y</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QDoubleSpinBox" name="YSpinBox"/>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>angular P</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QDoubleSpinBox" name="linearPSpinBox"/>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>linear P</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QDoubleSpinBox" name="angularPSpinBox"/>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QVBoxLayout" name="buttons">
+      <item>
+       <widget class="QPushButton" name="startTestPushButton">
+        <property name="text">
+         <string>Start Test</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton">
+        <property name="text">
+         <string>Connect</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="setNewGoalButton">
+        <property name="text">
+         <string>Set goal</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="cancelGoalButton">
+        <property name="text">
+         <string>Cancel goal</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QLabel" name="label_6">
+        <property name="text">
+         <string>Linear speed</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QDoubleSpinBox" name="linearSpinBox"/>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_7">
+        <property name="text">
+         <string>Angular speed</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QDoubleSpinBox" name="angularSpinBox"/>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QLabel" name="local_map">
+      <property name="text">
+       <string>TextLabel</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">

@@ -10,6 +10,8 @@ public:
     double x;
     double y;
     double yaw;
+    double linearVel;
+    double angularVel;
 
     Position2d() : x(0),y(0), yaw(0){
 

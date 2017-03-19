@@ -9,7 +9,10 @@ set ( SOURCES
  DifferencialDrive.cpp
         positionRegulator2dCircular.cpp
         positionRegulator2dLinear.cpp
-        LimitInterface.cpp)
+        LimitInterface.cpp
+        LocalMap.cpp
+        LocalPlanner.cpp
+        rplidar.cpp)
 
 set ( MY_HEADERS
  mainwindow.h
@@ -20,7 +23,10 @@ set ( MY_HEADERS
         positionRegulator2dCircular.h
         types.h
         positionRegulator2dLinear.h
-        LimitInterface.h)
+        LimitInterface.h
+        LocalMap.h
+        LocalPlanner.h
+        rplidar.h)
 
 set ( UIS
  mainwindow.ui
@@ -45,6 +51,7 @@ set (CMAKE_CXX_STANDARD 11)
 add_executable(${PROJECT_NAME}  ${SOURCES}
                                 ${MY_HEADERS}
                                 ${UI_HEADERS})
+target_compile_definitions(${PROJECT_NAME} PRIVATE REAL_ROBOT=false)
 
-message(STATUS ${QT_LIBRARIES})
-target_link_libraries( ${PROJECT_NAME} ${QT_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
+target_link_libraries(  ${PROJECT_NAME} ${QT_LIBRARIES}
+                                        ${CMAKE_THREAD_LIBS_INIT})

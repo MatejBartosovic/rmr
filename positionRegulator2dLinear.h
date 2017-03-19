@@ -11,12 +11,11 @@
 class PositionRegulator2dLinear : public Regulator{
 public:
     PositionRegulator2dLinear(Command &cmd);
-    void update(Position2d currentPos);
+    bool update(Position2d currentPos);
     void setAngularP(double p);
     void setLinearP(double p);
     void cancelGoal();
 protected:
-    Command &cmd;
     double velCmd;
     double Pa;
     double Pl;

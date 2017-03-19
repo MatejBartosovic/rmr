@@ -5,11 +5,11 @@
 #include "positionRegulator2dCircular.h"
 #include <math.h>
 
-PositionRegulator2dCircular::PositionRegulator2dCircular(Command &cmd ) : cmd(cmd){
+PositionRegulator2dCircular::PositionRegulator2dCircular(Command &cmd ) : Regulator(cmd){
 
 }
 
-void PositionRegulator2dCircular::update(Position2d currentPos) {
+bool PositionRegulator2dCircular::update(Position2d currentPos) {
 
     //calculate error
     double Ex = goal.x - currentPos.x;
@@ -22,7 +22,7 @@ void PositionRegulator2dCircular::update(Position2d currentPos) {
         cmd.leftVel = 0;
         cmd.rightVel = 0;
         cmd.commandType = Command::Motors;
-        return;
+        return true;
     }
 
     //turn in place
@@ -30,11 +30,12 @@ void PositionRegulator2dCircular::update(Position2d currentPos) {
         cmd.linear = 0;
         cmd.angular = 0.05;
         cmd.commandType = Command::LinearAngular;
-        return;
+        return true;
     }
 
     //go to target
     cmd.radius = Elinear/(2*sin(Eangular/2));
     cmd.linear = 0.25;
     cmd.commandType = Command::Radius;
+    return true;
 }

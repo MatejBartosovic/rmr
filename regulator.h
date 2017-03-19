@@ -9,7 +9,7 @@
 
 class Regulator {
 public:
-    Regulator() : goalActive(false){};
+    Regulator(Command &cmd) : goalActive(false),cmd(cmd){};
     virtual void setGoal(Position2d goal){
         this->goal = goal;
         goalActive = true;
@@ -17,9 +17,10 @@ public:
     virtual  void cancelGoal(){
         goalActive = false;
     }
-    virtual void update(Position2d currentPos) = 0;
+    virtual bool update(Position2d currentPos) = 0;
 protected:
     Position2d goal;
+    Command &cmd;
     bool goalActive;
 };
 

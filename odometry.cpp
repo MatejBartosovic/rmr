@@ -65,3 +65,7 @@ void Odometry::integrateYaw(double angular){
         pos.yaw = M_PI  + dif;
     }
 }
+
+Position2d* Odometry::getPosPointer() {
+    return &pos;
+}

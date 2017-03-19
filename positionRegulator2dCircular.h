@@ -11,9 +11,7 @@
 class PositionRegulator2dCircular : public  Regulator{
 public:
     PositionRegulator2dCircular(Command &cmd);
-    void update(Position2d currentPos);
-protected:
-    Command &cmd;
+    bool update(Position2d currentPos);
 };
 
 

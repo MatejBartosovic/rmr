@@ -7,6 +7,7 @@
 #include "DifferencialDrive.h"
 #include <thread>
 #include <condition_variable>
+#include "LocalMap.h"
 
 namespace Ui {
 class MainWindow;
@@ -35,7 +36,6 @@ public:
 private slots:
     void on_pushButton_clicked();
 
-    void on_pushButton_2_clicked();
     void showMessageBox()
             {
                 QMessageBox Msgbox;
@@ -44,6 +44,7 @@ private slots:
                 Msgbox.exec();
                 exit(-1);
             }
+    void drawMap();
 
 private:
     void runTest();

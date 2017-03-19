@@ -6,27 +6,32 @@
 #include <math.h>
 #include <stdio.h>
 
-PositionRegulator2dLinear::PositionRegulator2dLinear(Command &cmd) : cmd(cmd), velCmd(0.025),angularCount(0),linearCount(0),Pa(1.5),Pl(0.5){
+PositionRegulator2dLinear::PositionRegulator2dLinear(Command &cmd) : Regulator(cmd), velCmd(0.025),angularCount(0),linearCount(0),Pa(1.5),Pl(0.5){
 
 }
 
-void PositionRegulator2dLinear::update(Position2d currentPos) {
+bool PositionRegulator2dLinear::update(Position2d currentPos) {
     //calculate error
     if(goalActive){
         double Ex = goal.x - currentPos.x;
         double Ey = goal.y - currentPos.y;
         double Elinear  = sqrt (pow(Ex,2) + pow(Ey,2));
-        double goalAngular = atan2(Ex,Ey);
+        double goalAngular = atan2(Ey,Ex);
         double Eangular = goalAngular - currentPos.yaw;
 
         /*
-         * pi/2 a -pi/2 boarder
+         * pi and -pi boarder
          * */
-       //if(Eangular > M_PI_2)
-         //   Eangular = - (M_PI-Eangular);
+        printf("E pred = %lf\n",Eangular);
+       if(Eangular < -5.5)
+            Eangular =  (2*M_PI+Eangular);
+        if(Eangular > 5.5)
+            Eangular =  -(2*M_PI-Eangular);
+        printf("E po = %lf\n",Eangular);
 
         printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
         printf("pos x = %lf, posy = %lf yaw = %lf goal yaw = %lf angular error %lf\n",currentPos.x,currentPos.y,currentPos.yaw,goalAngular,Eangular);
+        printf("angular vel (n-1) = %lf\n",cmd.angular);
         //stop if near goal position
         if(fabs(Elinear) < 0.05){
             cmd.leftVel = 0;
@@ -38,7 +43,7 @@ void PositionRegulator2dLinear::update(Position2d currentPos) {
             printf("linear error = %lf \n",Elinear);
             printf("angular count = %d linear count =%d\n",angularCount,linearCount);
             goalActive = false;
-            return;
+            return true;
         }
 
         //turn in place
@@ -50,7 +55,7 @@ void PositionRegulator2dLinear::update(Position2d currentPos) {
             printf("Eangular = %lf\n",Eangular);
             angularCount++;
             cmd.commandType = Command::LinearAngular;
-            return;
+            return true;
         }
 
         //transform current vel to world frame
@@ -84,7 +89,7 @@ void PositionRegulator2dLinear::update(Position2d currentPos) {
             cmd.linear = 0.05 * (cmd.linear/fabs(cmd.linear));
 
     }
-
+    return true;
 }
 
 void PositionRegulator2dLinear::setAngularP(double p) {

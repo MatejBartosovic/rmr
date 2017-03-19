@@ -3,6 +3,8 @@
 #include "mainwindow.h"
 #include "positionRegulator2dCircular.h"
 #include "positionRegulator2dLinear.h"
+#include "LocalMap.h"
+#include "LocalPlanner.h"
 
 /*
  * Ta staticka funkcia bol genialny napad ...
@@ -12,6 +14,7 @@ iRobotCreate robot;
 Command cmd;
 DifferencialDrive difDrive(cmd,0.275,0.1);
 PositionRegulator2dLinear regulator2d(cmd);
+LocalPlanner localPlaner(cmd);
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -26,6 +29,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->angularSpinBox->setRange(-0.5,0.5);
     ui->XSpinBox->setRange(-10,10);
     ui->YSpinBox->setRange(-10,10);
+    ui->local_map->resize(QSize(400,400));
 
     connect(ui->linearSpinBox,SIGNAL(valueChanged(double)),this,SLOT(linearSpinBoxChange(double)));
     connect(ui->angularSpinBox,SIGNAL(valueChanged(double)),this,SLOT(angularSpinBoxChange(double)));
@@ -36,9 +40,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->setNewGoalButton,SIGNAL(clicked()),this,SLOT(setNewGoal()));
     connect(ui->cancelGoalButton,SIGNAL(clicked()),this,SLOT(cancelGoal()));
+    connect(&localPlaner,SIGNAL(newMap()),this,SLOT(drawMap()));
 
-    //connect(ui->linearPSpinBox,SIGNAL(valueChanged(double)),&regulator2d,SLOT(setLinearP(double)));
-    //regulator2d.setGoal(Position2d(1,1,0));
+
 }
 
 MainWindow::~MainWindow()
@@ -73,15 +77,8 @@ void MainWindow::on_pushButton_clicked()
         connect( this, SIGNAL( showMB() ), this, SLOT( showMessageBox() ), Qt::BlockingQueuedConnection );
         robot.dataProcess(this,&demoCallback);
     }
+    localPlaner.start();
 
-}
-
-void MainWindow::on_pushButton_2_clicked()
-{
-    robot.moveMotors(-35,35);
-    //robot.moveRobot(linear,angular);
-    usleep(1000*1000);
-    robot.moveMotors(0,0);
 }
 
 void MainWindow::linearSpinBoxChange(double val){
@@ -92,17 +89,19 @@ void MainWindow::angularSpinBoxChange(double val){
     cmd.angular = val;
 }
 void MainWindow::startTestButtonCallback() {
-    printf("spavning\n");
+    localPlaner.start();
     testThread = std::thread(&MainWindow::runTest,this);
 }
 
 void MainWindow::runTest(){
     while(true){
-        difDrive.update(cmd.linear,cmd.angular);
+        difDrive.update(cmd.linear/10,cmd.angular/10);
+        localPlaner.update(difDrive.getPos());
         regulator2d.update(difDrive.getPos());
         difDrive.updateCommand();
         //printf("linear = %lf, angular = %lf \n",cmd.linear,cmd.angular);
         //printf("left vel = %lf, right vel = %lf \n",cmd.leftVel*1000,cmd.rightVel*1000);
+
         usleep(100000);
     }
 }
@@ -121,4 +120,9 @@ void MainWindow::setNewGoal(){
 
 void MainWindow::cancelGoal(){
     regulator2d.cancelGoal();
+    localPlaner.cancelGoal();
+}
+
+void MainWindow::drawMap(){
+    ui->local_map->setPixmap(QPixmap::fromImage(localPlaner.getMap().scaled(400,400,Qt::KeepAspectRatio)));
 }

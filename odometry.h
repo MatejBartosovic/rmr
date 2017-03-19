@@ -14,6 +14,7 @@ public:
     double getY();
     double getYaw();
     Position2d getPos();
+    Position2d* getPosPointer();
 protected:
     Position2d pos;
 private:
