@@ -13,11 +13,11 @@ LocalMap::LocalMap(int sizeX, int sizeY, double resolution) :
 }
 
 void LocalMap::start() {
-    if(REAL_ROBOT){
-        lidar.connect("/dev/laser");
-        lidar.enable();
-        lidar.start();
-    }
+#ifdef REAL_ROBOT
+    lidar.connect("/dev/laser");
+    lidar.enable();
+    lidar.start();
+#endif
     QThread::start();
 }
 
@@ -57,34 +57,32 @@ void LocalMap::buildMap() {
 
 
     resetLastMap();
-
-    if( REAL_ROBOT){
-        LaserMeasurement scan = lidar.getMeasurement();
-        printf("mam %d bodov\n",scan.numberOfScans);
-        for (int i = 0; i < scan.numberOfScans; i++) {
-            int x = (int)(cos(scan.Data[i].scanAngle/180*M_PI_2)*scan.Data[i].scanDistance/100/resolution) +xSquares_2;
-            int y = (int)(sin(scan.Data[i].scanAngle/180*M_PI_2)*scan.Data[i].scanDistance/100/resolution) +ySquares_2;
-            QPoint obstacle(y,x);
-            map.setPixel(obstacle,qRgb(0,0,0));
-            printf("x= %d y = %d\ndistance + %lf angle = %lf\n",x,y, scan.Data[i].scanDistance,scan.Data[i].scanAngle);
-            lastMap.push_back(obstacle);
-        }
+#ifdef REAL_ROBOT
+    LaserMeasurement scan = lidar.getMeasurement();
+    printf("mam %d bodov\n",scan.numberOfScans);
+    for (int i = 0; i < scan.numberOfScans; i++) {
+        int x = (int)(cos(scan.Data[i].scanAngle/180*M_PI_2)*scan.Data[i].scanDistance/100/resolution) +xSquares_2;
+        int y = (int)(sin(scan.Data[i].scanAngle/180*M_PI_2)*scan.Data[i].scanDistance/100/resolution) +ySquares_2;
+        QPoint obstacle(y,x);
+        map.setPixel(obstacle,qRgb(0,0,0));
+        printf("x= %d y = %d\ndistance + %lf angle = %lf\n",x,y, scan.Data[i].scanDistance,scan.Data[i].scanAngle);
+        lastMap.push_back(obstacle);
     }
-    else{
-        //fake map building
-        for(int i=0;i<=10;i++){
-            //line simulator
-            double x = 2 - pos.x;
-            double y = ((-0.5+0.1*i) +pos.y);
-            QPoint obstacle(xSquares_2 + (sin(pos.yaw)*x + cos(pos.yaw)*y)/resolution,ySquares_2-(cos(pos.yaw)*x -sin(pos.yaw)*y)/resolution);
-            lastMap.push_back(obstacle);
-            map.setPixel(obstacle,qRgb(0,0,0));
-        }
-        QPoint robot(0+xSquares_2,0+ySquares_2);
-        map.setPixel(robot,qRgb(255, 0,0));
-
-        //print new map
+#else
+    //fake map building
+    for(int i=0;i<=10;i++){
+        //line simulator
+        double x = 2 - pos.x;
+        double y = ((-0.5+0.1*i) +pos.y);
+        QPoint obstacle(xSquares_2 + (sin(pos.yaw)*x + cos(pos.yaw)*y)/resolution,ySquares_2-(cos(pos.yaw)*x -sin(pos.yaw)*y)/resolution);
+        lastMap.push_back(obstacle);
+        map.setPixel(obstacle,qRgb(0,0,0));
     }
+    QPoint robot(0+xSquares_2,0+ySquares_2);
+    map.setPixel(robot,qRgb(255, 0,0));
+#endif
+        //emit new map
+    printf("emitting !!!!!!!!!!!!!!!!!!!!!!!!!!\n");
      emit(newMap());
 }
 

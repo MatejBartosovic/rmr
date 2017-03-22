@@ -1,4 +1,0 @@
-/home/matejko/workspace/DEMO/robot_demo/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/matejko/workspace/DEMO/robot_demo/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/matejko/workspace/DEMO/robot_demo/cmake-build-debug/CMakeFiles/robot_demo.dir
-/home/matejko/workspace/DEMO/robot_demo/cmake-build-debug/CMakeFiles/robot_demo_automoc.dir

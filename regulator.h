@@ -14,7 +14,7 @@ public:
         this->goal = goal;
         goalActive = true;
     }
-    void cancelGoal(){
+    virtual void cancelGoal(){
         cmd.linear = 0;
         cmd.angular = 0;
         cmd.leftVel = 0;
@@ -23,6 +23,9 @@ public:
         goalActive = false;
     }
     virtual bool update(Position2d currentPos) = 0;
+    bool isGoalActive(){
+        return goalActive;
+    }
 protected:
     Position2d goal;
     Command &cmd;

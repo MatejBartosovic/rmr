@@ -11,7 +11,6 @@ Odometry::Odometry() : pos() {
 }
 
 void Odometry::update(double linear, double angular,double time) {
-
     //printf("odometry update linear = %lf angular = %lf\n",linear,angular);
     if(time){
         std::chrono::high_resolution_clock::time_point now = std::chrono::system_clock::now();
@@ -20,6 +19,7 @@ void Odometry::update(double linear, double angular,double time) {
         pos.angularVel = angular/dif.count()*1000;
         last = now;
     } else{
+        printf("odometry update linear = %lf angular = %lf\n",linear,angular);
         pos.linearVel = linear/time;
         pos.angularVel = angular/time;
     }
@@ -33,7 +33,7 @@ void Odometry::update(double linear, double angular,double time) {
         const double r = linear/angular;
         integrateYaw(angular);
         pos.x       +=  r * (sin(pos.yaw) - sin(heading_old));
-        pos.y       += -r * (cos(pos.yaw) - cos(heading_old));
+        pos.y       +=  -r * (cos(pos.yaw) - cos(heading_old));
     }
 }
 

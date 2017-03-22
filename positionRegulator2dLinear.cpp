@@ -22,16 +22,13 @@ bool PositionRegulator2dLinear::update(Position2d currentPos) {
         /*
          * pi and -pi boarder
          * */
-        printf("E pred = %lf\n",Eangular);
        if(Eangular < -5.5)
             Eangular =  (2*M_PI+Eangular);
         if(Eangular > 5.5)
             Eangular =  -(2*M_PI-Eangular);
-        printf("E po = %lf\n",Eangular);
 
         printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
         printf("pos x = %lf, posy = %lf yaw = %lf goal yaw = %lf angular error %lf\n",currentPos.x,currentPos.y,currentPos.yaw,goalAngular,Eangular);
-        printf("angular vel (n-1) = %lf\n",cmd.angular);
         //stop if near goal position
         if(fabs(Elinear) < 0.05){
             cancelGoal();

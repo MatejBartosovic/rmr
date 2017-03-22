@@ -73,18 +73,16 @@ int MainWindow::demoCallback(CreateSensors inputData,void *ioPointer)
 }
 void MainWindow::on_pushButton_clicked()
 {
-    if(REAL_ROBOT){
-        if(robot.ConnectToPort("/dev/robot",this)){
-            connect( this, SIGNAL( showMB() ), this, SLOT( showMessageBox() ), Qt::BlockingQueuedConnection );
-            robot.dataProcess(this,&demoCallback);
-            localPlaner.start();
-        }
-    } else{
-        testThread = std::thread(&MainWindow::runTest,this);
+#ifdef REAL_ROBOT
+    if(robot.ConnectToPort("/dev/robot",this)){
+        connect( this, SIGNAL( showMB() ), this, SLOT( showMessageBox() ), Qt::BlockingQueuedConnection );
+        robot.dataProcess(this,&demoCallback);
         localPlaner.start();
     }
-
-
+#else
+        testThread = std::thread(&MainWindow::runTest,this);
+        localPlaner.start();
+#endif
 }
 
 void MainWindow::linearSpinBoxChange(double val){
@@ -96,6 +94,7 @@ void MainWindow::angularSpinBoxChange(double val){
 }
 
 void MainWindow::runTest(){
+    printf("running test\n");
     while(true){
         difDrive.update(cmd.linear/10,cmd.angular/10);
         localPlaner.update(difDrive.getPos());

@@ -1,7 +1,6 @@
 //
 // Created by matejko on 18.3.2017.
 //
-
 #include "LocalPlanner.h"
 
 LocalPlanner::LocalPlanner(Command cmd, double angularStep, double stepCount, double linearP) : LocalMap(6,6,0.1),
@@ -17,7 +16,10 @@ void LocalPlanner::start() {
 }
 
 bool LocalPlanner::update(Position2d pos) {
+    printf("update local plnner !!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+#ifdef MAP
     LocalMap::update(pos);
+#endif
     if(goalActive) {
         double Ex = goal.x - pos.x;
         double Ey = goal.y - pos.y;
