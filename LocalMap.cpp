@@ -13,8 +13,11 @@ LocalMap::LocalMap(int sizeX, int sizeY, double resolution) :
 }
 
 void LocalMap::start() {
-    if(REAL_ROBOT)
+    if(REAL_ROBOT){
+        lidar.connect("/dev/laser");
+        lidar.enable();
         lidar.start();
+    }
     QThread::start();
 }
 
@@ -57,11 +60,13 @@ void LocalMap::buildMap() {
 
     if( REAL_ROBOT){
         LaserMeasurement scan = lidar.getMeasurement();
+        printf("mam %d bodov\n",scan.numberOfScans);
         for (int i = 0; i < scan.numberOfScans; i++) {
-            int x = (int)cos(scan.Data->scanAngle)*scan.Data->scanDistance/resolution +xSquares_2;
-            int y = (int)sin(scan.Data->scanAngle)*scan.Data->scanDistance/resolution +ySquares_2;
+            int x = (int)(cos(scan.Data[i].scanAngle/180*M_PI_2)*scan.Data[i].scanDistance/100/resolution) +xSquares_2;
+            int y = (int)(sin(scan.Data[i].scanAngle/180*M_PI_2)*scan.Data[i].scanDistance/100/resolution) +ySquares_2;
             QPoint obstacle(y,x);
             map.setPixel(obstacle,qRgb(0,0,0));
+            printf("x= %d y = %d\ndistance + %lf angle = %lf\n",x,y, scan.Data[i].scanDistance,scan.Data[i].scanAngle);
             lastMap.push_back(obstacle);
         }
     }
@@ -78,8 +83,9 @@ void LocalMap::buildMap() {
         QPoint robot(0+xSquares_2,0+ySquares_2);
         map.setPixel(robot,qRgb(255, 0,0));
 
-        emit(newMap()); //print new map
+        //print new map
     }
+     emit(newMap());
 }
 
 void LocalMap::resetLastMap() {

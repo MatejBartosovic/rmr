@@ -9,12 +9,12 @@
 
 class Regulator {
 public:
-    Regulator(Command &cmd) : goalActive(false),cmd(cmd){};
+    Regulator(Command &cmd) : goalActive(false),cmd(cmd){}
     virtual void setGoal(Position2d goal){
         this->goal = goal;
         goalActive = true;
     }
-    virtual  void cancelGoal(){
+    void cancelGoal(){
         cmd.linear = 0;
         cmd.angular = 0;
         cmd.leftVel = 0;

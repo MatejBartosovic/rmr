@@ -15,5 +15,5 @@ void DifferencialDrive::updateCommand() {
         cmd.rightVel = (cmd.linear + cmd.angular * ws / 2.0);
         cmd.radius = cmd.linear / cmd.angular;
     //}
-    limiter.enforce();
+    //limiter.enforce();
 }

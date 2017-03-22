@@ -14,6 +14,7 @@ public:
     bool update(Position2d currentPos);
     void setAngularP(double p);
     void setLinearP(double p);
+
 protected:
     double velCmd;
     double Pa;

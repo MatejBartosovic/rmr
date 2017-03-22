@@ -118,12 +118,12 @@ void MainWindow::setLinearP(double p){
 
 void MainWindow::setNewGoal(){
     regulator2d.setGoal(Position2d(ui->XSpinBox->value(),ui->YSpinBox->value(),0));
-    localPlaner.setGoal(Position2d(ui->XSpinBox->value(),ui->YSpinBox->value(),0));
+    //localPlaner.setGoal(Position2d(ui->XSpinBox->value(),ui->YSpinBox->value(),0));
 }
 
 void MainWindow::cancelGoal(){
     regulator2d.cancelGoal();
-    localPlaner.cancelGoal();
+    //localPlaner.cancelGoal();
 }
 
 void MainWindow::drawMap(){
