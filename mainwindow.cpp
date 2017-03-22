@@ -33,7 +33,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->linearSpinBox,SIGNAL(valueChanged(double)),this,SLOT(linearSpinBoxChange(double)));
     connect(ui->angularSpinBox,SIGNAL(valueChanged(double)),this,SLOT(angularSpinBoxChange(double)));
-    connect(ui->startTestPushButton,SIGNAL(clicked()),this,SLOT(startTestButtonCallback()));
 
     connect(ui->angularPSpinBox,SIGNAL(valueChanged(double)),this,SLOT(setAngularP(double)));
     connect(ui->linearPSpinBox,SIGNAL(valueChanged(double)),this,SLOT(setLinearP(double)));
@@ -64,6 +63,7 @@ int MainWindow::demoCallback(CreateSensors inputData,void *ioPointer)
     difDrive.update((double)inputData.Distance/1000.0,(double)inputData.Angle/180.0*M_PI);
 
     regulator2d.update(difDrive.getPos());
+    localPlaner.update(difDrive.getPos());
     //update command
     difDrive.updateCommand();
 
@@ -73,11 +73,17 @@ int MainWindow::demoCallback(CreateSensors inputData,void *ioPointer)
 }
 void MainWindow::on_pushButton_clicked()
 {
-    if(robot.ConnectToPort("/dev/robot",this)){
-        connect( this, SIGNAL( showMB() ), this, SLOT( showMessageBox() ), Qt::BlockingQueuedConnection );
-        robot.dataProcess(this,&demoCallback);
+    if(REAL_ROBOT){
+        if(robot.ConnectToPort("/dev/robot",this)){
+            connect( this, SIGNAL( showMB() ), this, SLOT( showMessageBox() ), Qt::BlockingQueuedConnection );
+            robot.dataProcess(this,&demoCallback);
+            localPlaner.start();
+        }
+    } else{
+        testThread = std::thread(&MainWindow::runTest,this);
+        localPlaner.start();
     }
-    localPlaner.start();
+
 
 }
 
@@ -87,10 +93,6 @@ void MainWindow::linearSpinBoxChange(double val){
 
 void MainWindow::angularSpinBoxChange(double val){
     cmd.angular = val;
-}
-void MainWindow::startTestButtonCallback() {
-    localPlaner.start();
-    testThread = std::thread(&MainWindow::runTest,this);
 }
 
 void MainWindow::runTest(){
@@ -116,6 +118,7 @@ void MainWindow::setLinearP(double p){
 
 void MainWindow::setNewGoal(){
     regulator2d.setGoal(Position2d(ui->XSpinBox->value(),ui->YSpinBox->value(),0));
+    localPlaner.setGoal(Position2d(ui->XSpinBox->value(),ui->YSpinBox->value(),0));
 }
 
 void MainWindow::cancelGoal(){

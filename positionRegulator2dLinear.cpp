@@ -34,15 +34,9 @@ bool PositionRegulator2dLinear::update(Position2d currentPos) {
         printf("angular vel (n-1) = %lf\n",cmd.angular);
         //stop if near goal position
         if(fabs(Elinear) < 0.05){
-            cmd.leftVel = 0;
-            cmd.rightVel = 0;
-            cmd.linear = 0;
-            cmd.angular = 0;
-            cmd.commandType = Command::Motors;
+            cancelGoal();
             printf("!!!!!!!!!!!! TARGET POSITION REACHED !!!!!!!!!!!!! \n" );
             printf("linear error = %lf \n",Elinear);
-            printf("angular count = %d linear count =%d\n",angularCount,linearCount);
-            goalActive = false;
             return true;
         }
 
@@ -98,13 +92,5 @@ void PositionRegulator2dLinear::setAngularP(double p) {
 
 void PositionRegulator2dLinear::setLinearP(double p) {
     Pl = p;
-}
-
-void PositionRegulator2dLinear::cancelGoal(){
-    cmd.linear = 0;
-    cmd.angular = 0;
-    cmd .leftVel = 0;
-    cmd.rightVel = 0;
-    Regulator::cancelGoal();
 }
 

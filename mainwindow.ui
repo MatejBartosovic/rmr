@@ -72,13 +72,6 @@
     <item>
      <layout class="QVBoxLayout" name="buttons">
       <item>
-       <widget class="QPushButton" name="startTestPushButton">
-        <property name="text">
-         <string>Start Test</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QPushButton" name="pushButton">
         <property name="text">
          <string>Connect</string>

@@ -10,8 +10,20 @@ Odometry::Odometry() : pos() {
 
 }
 
-void Odometry::update(double linear, double angular) {
+void Odometry::update(double linear, double angular,double time) {
+
     //printf("odometry update linear = %lf angular = %lf\n",linear,angular);
+    if(time){
+        std::chrono::high_resolution_clock::time_point now = std::chrono::system_clock::now();
+        std::chrono::duration<double, std::milli> dif = now-last;
+        pos.linearVel = linear/dif.count()*1000;
+        pos.angularVel = angular/dif.count()*1000;
+        last = now;
+    } else{
+        pos.linearVel = linear/time;
+        pos.angularVel = angular/time;
+    }
+
     if (fabs(angular) < 1e-6)
         integrateRungeKutta2(linear, angular);
     else
@@ -51,6 +63,10 @@ Position2d Odometry::getPos() {
     return pos;
 }
 
+void Odometry::reset(Position2d pos) {
+    this->pos = pos;
+}
+
 /*
         * pi/2 a -pi/2 boarder function to integrate yaw
         * */
@@ -64,8 +80,4 @@ void Odometry::integrateYaw(double angular){
         double dif = pos.yaw + M_PI;
         pos.yaw = M_PI  + dif;
     }
-}
-
-Position2d* Odometry::getPosPointer() {
-    return &pos;
 }

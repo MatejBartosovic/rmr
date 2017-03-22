@@ -15,6 +15,11 @@ public:
         goalActive = true;
     }
     virtual  void cancelGoal(){
+        cmd.linear = 0;
+        cmd.angular = 0;
+        cmd.leftVel = 0;
+        cmd.rightVel = 0;
+        cmd.commandType = Command::Motors;
         goalActive = false;
     }
     virtual bool update(Position2d currentPos) = 0;

@@ -25,7 +25,6 @@ public slots:
     void setLinearP(double p);
     void setNewGoal();
     void cancelGoal();
-    void startTestButtonCallback();
 public:
 
     void forMsgBox(){emit showMB();}
