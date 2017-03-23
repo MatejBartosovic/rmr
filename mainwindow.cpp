@@ -23,6 +23,7 @@ MainWindow::MainWindow(QWidget *parent) :
  //
     ui->setupUi(this);
 
+    ui->currentX->setText("sss");
     ui->linearSpinBox->setSingleStep(0.05);
     ui->linearSpinBox->setRange(-0.5,0.5);
     ui->angularSpinBox->setSingleStep(0.05);
@@ -62,6 +63,10 @@ int MainWindow::demoCallback(CreateSensors inputData,void *ioPointer)
 
     difDrive.update((double)inputData.Distance/1000.0,(double)inputData.Angle/180.0*M_PI);
 
+    currentWindow->ui->currentX->setText(QString(std::to_string(difDrive.getX()).c_str()));
+    currentWindow->ui->currentY->setText(QString(std::to_string(difDrive.getY()).c_str()));
+    currentWindow->ui->currentYaw->setText(QString(std::to_string(difDrive.getYaw()).c_str()));
+
     regulator2d.update(difDrive.getPos());
     localPlaner.update(difDrive.getPos());
     //update command
@@ -97,6 +102,11 @@ void MainWindow::runTest(){
     printf("running test\n");
     while(true){
         difDrive.update(cmd.linear/10,cmd.angular/10);
+
+        ui->currentX->setText(QString(std::to_string(difDrive.getX()).c_str()));
+        ui->currentY->setText(QString(std::to_string(difDrive.getY()).c_str()));
+        ui->currentYaw->setText(QString(std::to_string(difDrive.getYaw()).c_str()));
+
         localPlaner.update(difDrive.getPos());
         regulator2d.update(difDrive.getPos());
         difDrive.updateCommand();
