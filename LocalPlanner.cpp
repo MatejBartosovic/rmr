@@ -16,7 +16,7 @@ void LocalPlanner::start() {
 }
 
 bool LocalPlanner::update(Position2d pos) {
-    printf("update local plnner !!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+    //printf("update local plnner !!!!!!!!!!!!!!!!!!!!!!!!!!\n");
 #ifdef MAP
     LocalMap::update(pos);
 #endif

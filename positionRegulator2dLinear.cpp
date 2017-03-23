@@ -73,11 +73,13 @@ bool PositionRegulator2dLinear::update(Position2d currentPos) {
 
         if (fabs(cmd.angular) > 0.5)
             cmd.angular = 0.5 * (cmd.angular/fabs(cmd.angular));
+	if(fabs(cmd.angular) < 0.15)
+	    cmd.angular = 0.15 * (cmd.angular/fabs(cmd.angular));
         if (fabs(cmd.linear) > 0.3)
             cmd.linear = 0.3 * (cmd.linear/fabs(cmd.linear));
 
-        if (fabs(cmd.linear) < 0.05)
-            cmd.linear = 0.05 * (cmd.linear/fabs(cmd.linear));
+        if (fabs(cmd.linear) < 0.1)
+            cmd.linear = 0.1 * (cmd.linear/fabs(cmd.linear));
 
     }
     return true;
