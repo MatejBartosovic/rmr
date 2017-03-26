@@ -5,9 +5,11 @@
 
 LocalPlanner::LocalPlanner(Command cmd, double angularStep, double stepCount, double linearP) : LocalMap(6,6,0.1),
                                                                                                 Regulator(cmd),
+                                                                                                linearP(linearP),
                                                                                                 angularStep(angularStep),
                                                                                                 stepCount(stepCount),
-                                                                                                linearP(linearP){
+                                                                                                simTime(0.1),
+                                                                                                flors(5){
 
 }
 
@@ -16,7 +18,6 @@ void LocalPlanner::start() {
 }
 
 bool LocalPlanner::update(Position2d pos) {
-    printf("update local plnner !!!!!!!!!!!!!!!!!!!!!!!!!!\n");
 #ifdef MAP
     LocalMap::update(pos);
 #endif
@@ -38,8 +39,6 @@ bool LocalPlanner::update(Position2d pos) {
             vel = -0.3;
 
         //generate trajectories tree
-        int flors = 3;
-        double simTime = 0.5;
         double distance = simTime * vel;
         std::vector<std::vector<trajectoryPoint>> trajectoryFlors(flors);
         trajectoryFlors.clear();
@@ -50,15 +49,14 @@ bool LocalPlanner::update(Position2d pos) {
         trajectoryFlors.push_back(currentTrajectoryPositions);
         currentTrajectoryPositions.clear();
 
-        for (int i = 1; i < flors; i++) {
+        for (int i = 0; i < flors; i++) {
 
             for (int j = 0; j < trajectoryFlors[i - 1].size(); j++) {
                 for (int k = -stepCount; k <= stepCount; k++) {
-                    odometry.reset(Position2d());
+                    odometry.reset(trajectoryFlors[i][j].pos);
                     double angle = simTime * k * angularStep;
                     odometry.update(distance, angle, simTime);
-                    currentTrajectoryPositions.push_back(
-                            trajectoryPoint(odometry.getPos(), &trajectoryFlors[i - 1][j]));
+                    currentTrajectoryPositions.push_back(trajectoryPoint(odometry.getPos(), &trajectoryFlors[i - 1][j]));
                 }
             }
             trajectoryFlors.push_back(currentTrajectoryPositions);

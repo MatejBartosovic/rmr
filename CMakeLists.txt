@@ -47,6 +47,8 @@ QT4_WRAP_CPP( MOC_SRCS ${MY_HEADERS} )
 
 set (CMAKE_CXX_STANDARD 11)
 
+include_directories(CMAKE_BINARY_DIR)
+
 add_executable(odometry_test    odometry_test.cpp
                                 odometry.cpp
         )
@@ -59,7 +61,7 @@ add_executable(${PROJECT_NAME}  main.cpp
 
 
 #target_compile_definitions(${PROJECT_NAME} PRIVATE REAL_ROBOT)
-#target_compile_definitions(${PROJECT_NAME} PRIVATE MAP)
+target_compile_definitions(${PROJECT_NAME} PRIVATE MAP)
 
 target_link_libraries(  ${PROJECT_NAME} ${QT_LIBRARIES}
                                         ${CMAKE_THREAD_LIBS_INIT})

@@ -26,8 +26,11 @@ public:
     bool update(Position2d pos);
 
 private:
+    //parameters
     double angularStep;
     double stepCount;
+    double simTime;
+    int flors;
     double linearP;
     Odometry odometry;
 

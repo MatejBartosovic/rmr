@@ -151,11 +151,11 @@ LaserMeasurement rplidar::getMeasurement()
         tempL.numberOfScans=-2;
         return tempL;
     }
-    if(poslednePoslane>=ktoreMeranie)
+    /*if(poslednePoslane>=ktoreMeranie)
     {
         tempL.numberOfScans=-1;
         return tempL;
-    }
+    }*/
 
     ktorePosielam=kdeJeCele;
     memcpy(&tempL,&localMeranie[kdeJeCele],sizeof(LaserMeasurement));
@@ -261,6 +261,7 @@ Start:
             localMeranie[ktoreZapisujem].Data[indexKamPisem].scanDistance=(float)((float)(dataR[3])+(float)(dataR[4]*256))/64;
             indexKamPisem++;
             localMeranie[ktoreZapisujem].numberOfScans=indexKamPisem;
+            //TODO spracovat nove meranie
         }
         else
         {
