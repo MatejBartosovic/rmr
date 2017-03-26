@@ -13,7 +13,7 @@ LocalMap::LocalMap(int sizeX, int sizeY, double resolution) :
 }
 
 void LocalMap::start() {
-#ifdef REAL_ROBOT
+#ifdef LIDAR
     lidar.connect("/dev/laser");
     lidar.enable();
     lidar.start();
@@ -57,7 +57,7 @@ void LocalMap::buildMap() {
 
 
     resetLastMap();
-#ifdef REAL_ROBOT
+#ifdef LIDAR
     LaserMeasurement scan = lidar.getMeasurement();
     printf("mam %d bodov\n",scan.numberOfScans);
     for (int i = 0; i < scan.numberOfScans; i++) {

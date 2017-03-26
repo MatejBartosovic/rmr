@@ -60,8 +60,10 @@ add_executable(${PROJECT_NAME}  main.cpp
                                 ${MOC_SRCS})
 
 
-#target_compile_definitions(${PROJECT_NAME} PRIVATE REAL_ROBOT)
+
 target_compile_definitions(${PROJECT_NAME} PRIVATE MAP)
+target_compile_definitions(${PROJECT_NAME} PRIVATE REAL_ROBOT)
+
 
 target_link_libraries(  ${PROJECT_NAME} ${QT_LIBRARIES}
                                         ${CMAKE_THREAD_LIBS_INIT})
