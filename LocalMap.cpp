@@ -82,7 +82,7 @@ void LocalMap::buildMap() {
     map.setPixel(robot,qRgb(255, 0,0));
 #endif
         //emit new map
-    printf("emitting !!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+    //printf("emitting !!!!!!!!!!!!!!!!!!!!!!!!!!\n");
      emit(newMap());
 }
 
