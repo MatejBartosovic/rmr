@@ -9,7 +9,6 @@
 //// treba ratat s tym,ze niesu osetrene chybove stavy zariadenia
 ////*************************************************************************************
 ////*************************************************************************************
-#pragma once
 #include <stdio.h>
 #include <stdlib.h>
 #include "unistd.h"
@@ -105,16 +104,16 @@ public:
     unsigned char getUnspecifiedResponse(unsigned char *request);
     //vrati nam aktualne meranie ak vzniklo nove, ak nieje nove meranie v numberOfScans je -1; ak nebolo inicializovane tak -2. ak nieje funkcne spojenie tak -3,ak nieje spustene meranie -4
     LaserMeasurement getMeasurement();
- int vystupvlakno;
+
 private:
 
     //--spustenie merania v novom vlakne (vycitavanie bezi v novom vlakne. treba ho stopnut ak chceme poslat request)
     static void *laserVlakno(void *param)
     {
         rplidar *rplid=(rplidar*)param;
-        rplid->vystupvlakno=rplid->measure();
+        int vystup=rplid->measure();
 
-        return &(rplid->vystupvlakno);
+        return &vystup;
     }
 
 };
