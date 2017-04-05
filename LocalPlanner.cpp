@@ -22,17 +22,19 @@ bool LocalPlanner::update(Position2d pos) {
 #ifdef MAP
     LocalMap::update(pos);
 #endif
-    if(goalActive) {
+    /*if(goalActive) {
         double Ex = goal.x - pos.x;
         double Ey = goal.y - pos.y;
         double Elinear = sqrt(pow(Ex, 2) + pow(Ey, 2));
 
-        /*if(Elinear < 0.05){
-            printf("~~~~~~~~~TARGET POSITION REACHED~~~~~~~~~~~~~~\n");
-            printf("linear error = %lf\n",Elinear);
-            cancelGoal();
-            return  true;
-        }*/
+        /
+
+	//if(Elinear < 0.05){
+           // printf("~~~~~~~~~TARGET POSITION REACHED~~~~~~~~~~~~~~\n");
+           // printf("linear error = %lf\n",Elinear);
+           // cancelGoal();
+         //   return  true;
+       // }
         double vel = 0.5 * Elinear;
         if (vel > 0.3)
             vel = 0.3;
@@ -72,11 +74,10 @@ bool LocalPlanner::update(Position2d pos) {
             for (int j = 0; j < trajectoryFlors[i].size() ; j++) {
                 double obstacleDistance = getObstacleDistance(trajectoryFlors[i][j].pos,map);
                 //todo zefektivnit vypocet ak je bod nevhodny
-                /*
-                 *
-                 * cost function here
-                 *
-                 * */
+
+                // * cost function here
+                
+                 
                 //trajectoryFlors[i][j].
             }
         }
@@ -97,7 +98,7 @@ bool LocalPlanner::update(Position2d pos) {
         //chose the best trajectory
         std::vector<double>::iterator minElement = std::min_element(costs.begin(),costs.end());
         printf("minimum %lf\n",*minElement);
-    }
+    }*/
 
 }
 

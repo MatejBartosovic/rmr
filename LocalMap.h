@@ -13,7 +13,7 @@
 #include "types.h"
 #include <QThread>
 #include <QLabel>
-
+#include <QTimer>
 class LocalMap : public QThread{
 public:
 Q_OBJECT
@@ -44,7 +44,9 @@ protected:
     Position2d pos;
     QImage map;
     std::vector<QPoint> lastMap;
-
+    QTimer *timer;
+protected slots:
+    void timerUpdate();
 };
 
 

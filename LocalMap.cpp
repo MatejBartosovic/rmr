@@ -3,13 +3,15 @@
 //
 
 #include "LocalMap.h"
-
+#include <sys/time.h>
 LocalMap::LocalMap(int sizeX, int sizeY, double resolution) :
         resolution(resolution), xSquares(sizeX/resolution), ySquares(sizeY/resolution),
         xSquares_2(xSquares>>1), ySquares_2(ySquares>>1),map(xSquares,ySquares,QImage::Format_RGB32) {
     for (int i = 0; i < map.width(); i++)
         for (int j = 0; j < map.height(); j++)
             map.setPixel(i,j,qRgb(255, 255, 255));
+    timer = new QTimer(this);
+ connect(timer, SIGNAL(timeout()), this, SLOT(timerUpdate()));
 }
 
 void LocalMap::start() {
@@ -19,6 +21,7 @@ void LocalMap::start() {
     lidar.start();
 #endif
     QThread::start();
+    timer->start(1000);
 }
 
 void LocalMap::run() {
@@ -56,26 +59,35 @@ LocalMap::~LocalMap() {
 void LocalMap::buildMap() {
 
 
-    resetLastMap();
+    //resetLastMap();
 #ifdef LIDAR
     LaserMeasurement scan = lidar.getMeasurement();
-    printf("mam %d bodov\n",scan.numberOfScans);
-    if(scan.numberOfScans <0)
+struct timeval tp;
+gettimeofday(&tp, NULL);
+
+    printf("mam %d bodov sec = %d usec = %d\n",scan.numberOfScans,tp.tv_sec,tp.tv_usec);
+if(scan.numberOfScans <0)
         return;
+    resetLastMap();
     printf("locking\n");
-    mapLock.lock();
+    //mapLock.lock();
     for (int i = 0; i < scan.numberOfScans; i++) {
-        int x = (int)(cos(scan.Data[i].scanAngle/180*M_PI_2)*scan.Data[i].scanDistance/100/resolution) +xSquares_2;
-        int y = (int)(sin(scan.Data[i].scanAngle/180*M_PI_2)*scan.Data[i].scanDistance/100/resolution) +ySquares_2;
-        QPoint obstacle(y,x);
+	if(scan.Data[i].scanDistance <10)
+		continue;
+        int x = (int)(cos(scan.Data[i].scanAngle/180*M_PI)*scan.Data[i].scanDistance/100/resolution*1.45) +xSquares_2;
+        int y = (int)(sin(scan.Data[i].scanAngle/180*M_PI)*scan.Data[i].scanDistance/100/resolution*1.45) +ySquares_2;
+        if(x>xSquares || y > ySquares)
+		continue;
+	QPoint obstacle(y,x);
         map.setPixel(obstacle,qRgb(0,0,0));
-        printf("x= %d y = %d\ndistance + %lf angle = %lf\n",x,y, scan.Data[i].scanDistance,scan.Data[i].scanAngle);
+        printf("x= %d y = %d\ndistance %lf angle = %lf\n",x,y, scan.Data[i].scanDistance,scan.Data[i].scanAngle);
         lastMap.push_back(obstacle);
     }
     printf("unlocking\n");
-    mapLock.unlock();
+    //mapLock.unlock();
 #else
     //fake map building
+    resetLastMap();
     for(int i=0;i<=10;i++){
         //line simulator
         double x = 2 - pos.x;
@@ -89,7 +101,6 @@ void LocalMap::buildMap() {
 #endif
         //emit new map
     //printf("emitting !!!!!!!!!!!!!!!!!!!!!!!!!!\n");
-     emit(newMap());
 }
 
 void LocalMap::resetLastMap() {
@@ -163,4 +174,8 @@ double LocalMap::getObstacleDistance(Position2d pos, QImage &map) {
         return obstacleDistance;
     }
 
+}
+
+void LocalMap::timerUpdate(){
+ emit(newMap());
 }
