@@ -60,6 +60,10 @@ void LocalMap::buildMap() {
 #ifdef LIDAR
     LaserMeasurement scan = lidar.getMeasurement();
     printf("mam %d bodov\n",scan.numberOfScans);
+    if(scan.numberOfScans <0)
+        return;
+    printf("locking\n");
+    mapLock.lock();
     for (int i = 0; i < scan.numberOfScans; i++) {
         int x = (int)(cos(scan.Data[i].scanAngle/180*M_PI_2)*scan.Data[i].scanDistance/100/resolution) +xSquares_2;
         int y = (int)(sin(scan.Data[i].scanAngle/180*M_PI_2)*scan.Data[i].scanDistance/100/resolution) +ySquares_2;
@@ -68,6 +72,8 @@ void LocalMap::buildMap() {
         printf("x= %d y = %d\ndistance + %lf angle = %lf\n",x,y, scan.Data[i].scanDistance,scan.Data[i].scanAngle);
         lastMap.push_back(obstacle);
     }
+    printf("unlocking\n");
+    mapLock.unlock();
 #else
     //fake map building
     for(int i=0;i<=10;i++){
@@ -149,8 +155,6 @@ double LocalMap::getObstacleDistance(Position2d pos, QImage &map) {
             }
         }
     }
-    //printf("returning max\n");
-    return 10;
     KONEC: if(xObstacle>0){
         //printf("nearest obstacle x= %d y = %d\n",xObstacle,yObstacle);
         printf("obstacle found %d %d\n",xObstacle,yObstacle);
@@ -158,4 +162,5 @@ double LocalMap::getObstacleDistance(Position2d pos, QImage &map) {
         printf("nearest obstacle distance = %lf\n",obstacleDistance);
         return obstacleDistance;
     }
+
 }
