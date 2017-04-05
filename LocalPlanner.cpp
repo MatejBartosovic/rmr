@@ -45,24 +45,24 @@ bool LocalPlanner::update(Position2d pos) {
         trajectoryFlors.clear();
 
         std::vector<trajectoryPoint> currentTrajectoryPositions;
-        currentTrajectoryPositions.push_back(trajectoryPoint(pos,NULL));
+        currentTrajectoryPositions.push_back(trajectoryPoint(Position2d(),NULL)); // som v mape na 0,0 resp (30 30 - stred mapy)
 
         trajectoryFlors.push_back(currentTrajectoryPositions);
         currentTrajectoryPositions.clear();
 
         for (int i = 0; i < flors; i++) {
-
-            for (int j = 0; j < trajectoryFlors[i - 1].size(); j++) {
+            for (int j = 0; j < trajectoryFlors[i].size(); j++) {
                 for (int k = -stepCount; k <= stepCount; k++) {
                     odometry.reset(trajectoryFlors[i][j].pos);
                     double angle = simTime * k * angularStep;
                     odometry.update(distance, angle, simTime);
-                    currentTrajectoryPositions.push_back(trajectoryPoint(odometry.getPos(), &trajectoryFlors[i - 1][j]));
+                    currentTrajectoryPositions.push_back(trajectoryPoint(odometry.getPos(), &trajectoryFlors[i][j]));
                 }
             }
             trajectoryFlors.push_back(currentTrajectoryPositions);
             currentTrajectoryPositions.clear();
         }
+        printf("trajectories generated\n");
 
         //get map
         QImage map = LocalMap::getMap();
@@ -77,7 +77,6 @@ bool LocalPlanner::update(Position2d pos) {
                  * cost function here
                  *
                  * */
-                //trajectoryFlors[i][j].
             }
         }
         int lastRow = trajectoryFlors.size()-1;

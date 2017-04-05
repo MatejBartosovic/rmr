@@ -101,56 +101,61 @@ double LocalMap::getObstacleDistance(Position2d pos, QImage &map) {
     //2m x 2m hladanie robot je v strede (1,1)
     int xObstacle = -1;
     int yObstacle = -1;
+
+    int robotPosX = xSquares_2 - pos.y/resolution;
+    int robotPosY = ySquares_2 -pos.x/resolution;
     for(int i = 1;i<=targetOffSet;i++){
         //check fron
         for (int j = 0; j <= i ; j++) {
             //prava strana v predu
-            if(map.pixel(xSquares_2 +j,ySquares_2-i)==0xff000000) { //0xff000000 je cierna
+            if(map.pixel(robotPosX +j,robotPosY-i)==0xff000000) { //0xff000000 je cierna
                 //printf("prekazka pred: ");
-                //printf(" pred locking for obstacle x = %d, y = %d %x\n", xSquares_2 + j, ySquares_2 - i,map.pixel(xSquares_2 + j, ySquares_2 - i));
-                xObstacle = xSquares_2 +j;
-                yObstacle = ySquares_2-i;
+                //printf(" pred locking for obstacle x = %d, y = %d %x\n", robotPosX + j, robotPosY - i,map.pixel(robotPosX + j, robotPosY - i));
+                xObstacle = robotPosX +j;
+                yObstacle = robotPosY-i;
                 //printf("obstacle fount x = %d y= %d\n",xObstacle,yObstacle);
                 goto KONEC;
             }
             //lava strana v predu
-            if(map.pixel(xSquares_2 -j,ySquares_2-i)==0xff000000) {
+            if(map.pixel(robotPosX -j,robotPosY-i)==0xff000000) {
                 //printf("prekazka pred: ");
-                //printf(" pred locking for obstacle x = %d, y = %d %x\n", xSquares_2 - j, ySquares_2 - i,map.pixel(xSquares_2 + j, ySquares_2 - i));
-                xObstacle = xSquares_2 -j;
-                yObstacle = ySquares_2-i;
+                //printf(" pred locking for obstacle x = %d, y = %d %x\n", robotPosX - j, robotPosY - i,map.pixel(robotPosX + j, robotPosY - i));
+                xObstacle = robotPosX -j;
+                yObstacle = robotPosY-i;
                 //printf("obstacle fount x = %d y= %d\n",xObstacle,yObstacle);
                 goto KONEC;
             }
         }
         //check left
-        for (int j = ySquares_2; j > xSquares_2 - i ; j--){
-            if(map.pixel(xSquares_2 -i,j)==0xff000000) {
+        for (int j = robotPosY; j > robotPosX - i ; j--){
+            if(map.pixel(robotPosX -i,j)==0xff000000) {
                 //printf("prekazka lava: ");
-                //printf("boky lave locking for obstacle x = %d, y = %d %x\n",xSquares_2-i,j,map.pixel(xSquares_2-i,j));
-                xObstacle = xSquares_2 -i;
+                //printf("boky lave locking for obstacle x = %d, y = %d %x\n",robotPosX-i,j,map.pixel(robotPosX-i,j));
+                xObstacle = robotPosX -i;
                 yObstacle = j;
                 //printf("obstacle fount x = %d y= %d\n",xObstacle,yObstacle);
                 goto KONEC;
             }
         }
         //check right
-        for (int j = ySquares_2; j > xSquares_2 - i ; j--){
-            if(map.pixel(xSquares_2 -i,j)==0xff000000){
+        for (int j = robotPosY; j > robotPosX - i ; j--){
+            if(map.pixel(robotPosX -i,j)==0xff000000){
                 //printf("prekazka prava: ");
-                //printf("boky prave locking for obstacle x = %d, y = %d %x\n",xSquares_2+i,j,map.pixel(xSquares_2-i,j));
-                xObstacle = xSquares_2 +i;
+                //printf("boky prave locking for obstacle x = %d, y = %d %x\n",robotPosX+i,j,map.pixel(robotPosX-i,j));
+                xObstacle = robotPosX +i;
                 yObstacle = j;
                 //printf("obstacle fount x = %d y= %d\n",xObstacle,yObstacle);
                 goto KONEC;
             }
         }
     }
+    //printf("returning max\n");
+    return 10;
     KONEC: if(xObstacle>0){
         //printf("nearest obstacle x= %d y = %d\n",xObstacle,yObstacle);
-        double obstacleDistance = sqrt(pow(xSquares_2-xObstacle,2) + pow(ySquares_2-yObstacle,2));
+        printf("obstacle found %d %d\n",xObstacle,yObstacle);
+        double obstacleDistance = sqrt(pow((robotPosX-xObstacle),2) + pow(robotPosY-yObstacle,2))*resolution;
         printf("nearest obstacle distance = %lf\n",obstacleDistance);
         return obstacleDistance;
     }
-
 }

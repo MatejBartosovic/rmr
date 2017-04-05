@@ -20,7 +20,7 @@ public:
 
 class LocalPlanner : public LocalMap, public Regulator{
 public:
-    LocalPlanner(Command cmd, double maxAngularChange = 0.6, double stepCount = 3, double linearP = 0.5);
+    LocalPlanner(Command cmd, double maxAngularChange = 0.6, double stepCount = 1, double linearP = 0.5);
     void setLinearP(double p);
     void start();
     bool update(Position2d pos);
