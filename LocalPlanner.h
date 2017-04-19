@@ -13,14 +13,19 @@ struct trajectoryPoint;
 struct trajectoryPoint{
 public:
     Position2d pos;
+    Velocity vel;
     double cost;
     trajectoryPoint* parrent;
-    trajectoryPoint(Position2d pos,trajectoryPoint* parrent) : pos(pos), parrent(parrent) {}
+    trajectoryPoint(Position2d pos, Velocity vela, trajectoryPoint* parrent) : pos(pos), vel(vela), parrent(parrent) {}
 };
 
 class LocalPlanner : public LocalMap, public Regulator{
 public:
-    LocalPlanner(Command cmd, double maxAngularChange = 0.6, double stepCount = 1, double linearP = 0.5);
+    //cmd pointer to robot command
+    //angularStep step betwen generatd trajectories points
+    //stepCount count of angular steps in positive and negative direction
+    //note: ((stemCount * angularStep)  / period) is max alloved acceleration
+    LocalPlanner(Command &cmd, double angularStep = 0.1, double stepCount = 1, double linearP = 0.5);
     void setLinearP(double p);
     void start();
     bool update(Position2d pos);

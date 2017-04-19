@@ -21,11 +21,12 @@ public:
     LocalMap(int sizeX, int sizeY,double resolution);
     void start();
     void update(Position2d pos);
+    void update();
     void run();
     void stop();
     QImage getMap();
     ~LocalMap();
-    double getObstacleDistance(Position2d pos, QImage &map);
+    double getObstacleDistance(Position2d pos, QImage &otherMap);
 signals:
     void newMap();
 

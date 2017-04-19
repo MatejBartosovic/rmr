@@ -35,8 +35,11 @@ void LocalMap::update(Position2d pos){
         this->pos = pos;
         updateCondition.notify_all();
     } // out of scope will be lock released
+}
 
-
+void LocalMap::update(){
+        //std::lock_guard<std::mutex> lock(mapLock);
+        updateCondition.notify_all();
 }
 
 void LocalMap::stop() {
@@ -62,8 +65,6 @@ void LocalMap::buildMap() {
     printf("mam %d bodov\n",scan.numberOfScans);
     if(scan.numberOfScans <0)
         return;
-    printf("locking\n");
-    mapLock.lock();
     for (int i = 0; i < scan.numberOfScans; i++) {
         int x = (int)(cos(scan.Data[i].scanAngle/180*M_PI_2)*scan.Data[i].scanDistance/100/resolution) +xSquares_2;
         int y = (int)(sin(scan.Data[i].scanAngle/180*M_PI_2)*scan.Data[i].scanDistance/100/resolution) +ySquares_2;
@@ -72,8 +73,6 @@ void LocalMap::buildMap() {
         printf("x= %d y = %d\ndistance + %lf angle = %lf\n",x,y, scan.Data[i].scanDistance,scan.Data[i].scanAngle);
         lastMap.push_back(obstacle);
     }
-    printf("unlocking\n");
-    mapLock.unlock();
 #else
     //fake map building
     for(int i=0;i<=10;i++){
@@ -87,9 +86,8 @@ void LocalMap::buildMap() {
     QPoint robot(0+xSquares_2,0+ySquares_2);
     map.setPixel(robot,qRgb(255, 0,0));
 #endif
-        //emit new map
-    //printf("emitting !!!!!!!!!!!!!!!!!!!!!!!!!!\n");
-     emit(newMap());
+    //emit new map
+    emit(newMap());
 }
 
 void LocalMap::resetLastMap() {
@@ -99,7 +97,7 @@ void LocalMap::resetLastMap() {
     lastMap.clear();
 }
 
-double LocalMap::getObstacleDistance(Position2d pos, QImage &map) {
+double LocalMap::getObstacleDistance(Position2d otherPos, QImage &otherMap) {
 
 
     int targetOffSet = 1.05/resolution;
@@ -108,59 +106,53 @@ double LocalMap::getObstacleDistance(Position2d pos, QImage &map) {
     int xObstacle = -1;
     int yObstacle = -1;
 
-    int robotPosX = xSquares_2 - pos.y/resolution;
-    int robotPosY = ySquares_2 -pos.x/resolution;
+    int robotPosX = xSquares_2 -otherPos.y/resolution;
+    int robotPosY = ySquares_2 -otherPos.x/resolution;
+    //printf("future robot position x = %d y = %d real x = %lf y =%lf \n",robotPosX,robotPosY,otherPos.x,otherPos.y);
     for(int i = 1;i<=targetOffSet;i++){
         //check fron
         for (int j = 0; j <= i ; j++) {
             //prava strana v predu
-            if(map.pixel(robotPosX +j,robotPosY-i)==0xff000000) { //0xff000000 je cierna
+            if(otherMap.pixel(robotPosX +j,robotPosY-i)==0xff000000) { //0xff000000 je cierna
                 //printf("prekazka pred: ");
                 //printf(" pred locking for obstacle x = %d, y = %d %x\n", robotPosX + j, robotPosY - i,map.pixel(robotPosX + j, robotPosY - i));
                 xObstacle = robotPosX +j;
                 yObstacle = robotPosY-i;
                 //printf("obstacle fount x = %d y= %d\n",xObstacle,yObstacle);
-                goto KONEC;
+                return sqrt(pow((robotPosX-xObstacle),2) + pow(robotPosY-yObstacle,2))*resolution;
             }
             //lava strana v predu
-            if(map.pixel(robotPosX -j,robotPosY-i)==0xff000000) {
+            if(otherMap.pixel(robotPosX -j,robotPosY-i)==0xff000000) {
                 //printf("prekazka pred: ");
                 //printf(" pred locking for obstacle x = %d, y = %d %x\n", robotPosX - j, robotPosY - i,map.pixel(robotPosX + j, robotPosY - i));
                 xObstacle = robotPosX -j;
                 yObstacle = robotPosY-i;
                 //printf("obstacle fount x = %d y= %d\n",xObstacle,yObstacle);
-                goto KONEC;
+                return sqrt(pow((robotPosX-xObstacle),2) + pow(robotPosY-yObstacle,2))*resolution;
             }
         }
         //check left
         for (int j = robotPosY; j > robotPosX - i ; j--){
-            if(map.pixel(robotPosX -i,j)==0xff000000) {
+            if(otherMap.pixel(robotPosX -i,robotPosY -j)==0xff000000) {
                 //printf("prekazka lava: ");
                 //printf("boky lave locking for obstacle x = %d, y = %d %x\n",robotPosX-i,j,map.pixel(robotPosX-i,j));
                 xObstacle = robotPosX -i;
-                yObstacle = j;
+                yObstacle = robotPosY -j;
                 //printf("obstacle fount x = %d y= %d\n",xObstacle,yObstacle);
-                goto KONEC;
+                return sqrt(pow((robotPosX-xObstacle),2) + pow(robotPosY-yObstacle,2))*resolution;
             }
         }
         //check right
         for (int j = robotPosY; j > robotPosX - i ; j--){
-            if(map.pixel(robotPosX -i,j)==0xff000000){
+            if(otherMap.pixel(robotPosX -i,j)==0xff000000){
                 //printf("prekazka prava: ");
                 //printf("boky prave locking for obstacle x = %d, y = %d %x\n",robotPosX+i,j,map.pixel(robotPosX-i,j));
                 xObstacle = robotPosX +i;
                 yObstacle = j;
                 //printf("obstacle fount x = %d y= %d\n",xObstacle,yObstacle);
-                goto KONEC;
+                return sqrt(pow((robotPosX-xObstacle),2) + pow(robotPosY-yObstacle,2))*resolution;
             }
         }
     }
-    KONEC: if(xObstacle>0){
-        //printf("nearest obstacle x= %d y = %d\n",xObstacle,yObstacle);
-        printf("obstacle found %d %d\n",xObstacle,yObstacle);
-        double obstacleDistance = sqrt(pow((robotPosX-xObstacle),2) + pow(robotPosY-yObstacle,2))*resolution;
-        printf("nearest obstacle distance = %lf\n",obstacleDistance);
-        return obstacleDistance;
-    }
-
+    return 10; //no obstacle found so return large number
 }

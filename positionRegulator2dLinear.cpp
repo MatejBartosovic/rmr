@@ -27,8 +27,8 @@ bool PositionRegulator2dLinear::update(Position2d currentPos) {
         if(Eangular > 5.5)
             Eangular =  -(2*M_PI-Eangular);
 
-        printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
-        printf("pos x = %lf, posy = %lf yaw = %lf goal yaw = %lf angular error %lf\n",currentPos.x,currentPos.y,currentPos.yaw,goalAngular,Eangular);
+        //printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+        //printf("pos x = %lf, posy = %lf yaw = %lf goal yaw = %lf angular error %lf\n",currentPos.x,currentPos.y,currentPos.yaw,goalAngular,Eangular);
         //stop if near goal position
         if(fabs(Elinear) < 0.05){
             cancelGoal();

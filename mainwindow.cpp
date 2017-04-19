@@ -67,8 +67,10 @@ int MainWindow::demoCallback(CreateSensors inputData,void *ioPointer)
     currentWindow->ui->currentY->setText(QString(std::to_string(difDrive.getY()).c_str()));
     currentWindow->ui->currentYaw->setText(QString(std::to_string(difDrive.getYaw()).c_str()));
 
+
     regulator2d.update(difDrive.getPos());
     localPlaner.update(difDrive.getPos());
+
     //update command
     difDrive.updateCommand();
 
@@ -101,14 +103,14 @@ void MainWindow::angularSpinBoxChange(double val){
 void MainWindow::runTest(){
     printf("running test\n");
     while(true){
-        difDrive.update(cmd.linear/10,cmd.angular/10);
+        difDrive.updateSim(cmd.linear/10,cmd.angular/10,cmd.linear,cmd.angular);
 
         ui->currentX->setText(QString(std::to_string(difDrive.getX()).c_str()));
         ui->currentY->setText(QString(std::to_string(difDrive.getY()).c_str()));
         ui->currentYaw->setText(QString(std::to_string(difDrive.getYaw()).c_str()));
 
         localPlaner.update(difDrive.getPos());
-        regulator2d.update(difDrive.getPos());
+        //regulator2d.update(difDrive.getPos());
         difDrive.updateCommand();
         //printf("linear = %lf, angular = %lf \n",cmd.linear,cmd.angular);
         //printf("left vel = %lf, right vel = %lf \n",cmd.leftVel*1000,cmd.rightVel*1000);
@@ -126,7 +128,8 @@ void MainWindow::setLinearP(double p){
 }
 
 void MainWindow::setNewGoal(){
-    regulator2d.setGoal(Position2d(ui->XSpinBox->value(),ui->YSpinBox->value(),0));
+    //regulator2d.setGoal(Position2d(ui->XSpinBox->value(),ui->YSpinBox->value(),0));
+    usleep(100000);
     localPlaner.setGoal(Position2d(ui->XSpinBox->value(),ui->YSpinBox->value(),0));
 }
 

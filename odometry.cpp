@@ -10,18 +10,30 @@ Odometry::Odometry() : pos() {
 
 }
 
-void Odometry::update(double linear, double angular,double time) {
-    if(time){
+void Odometry::update(double linear, double angular) {
         std::chrono::high_resolution_clock::time_point now = std::chrono::system_clock::now();
-        std::chrono::duration<double, std::milli> dif = now-last;
-        pos.linearVel = linear/dif.count()*1000;
-        pos.angularVel = angular/dif.count()*1000;
+        //std::chrono::duration<double, std::milli> dif = (now-last);
+        double dif = (now-last).count()*1000;
+        pos.vel.linear = linear/dif;
+        pos.vel.angular = angular/dif;
         last = now;
-    } else{
-        //printf("odometry update linear = %lf angular = %lf\n",linear,angular);
-        pos.linearVel = linear/time;
-        pos.angularVel = angular/time;
+
+    if (fabs(angular) < 1e-6)
+        integrateRungeKutta2(linear, angular);
+    else
+    {
+        /// Exact integration (should solve problems when angular is zero):
+        const double heading_old = pos.yaw;
+        const double r = linear/angular;
+        integrateYaw(angular);
+        pos.x       +=  r * (sin(pos.yaw) - sin(heading_old));
+        pos.y       +=  (-r * (cos(pos.yaw) - cos(heading_old)));
     }
+}
+
+void Odometry::updateSim(double linear, double angular,double linearVel, double angularVel) {
+    pos.vel.linear = linearVel;
+    pos.vel.angular = angularVel;
 
     if (fabs(angular) < 1e-6)
         integrateRungeKutta2(linear, angular);
@@ -64,6 +76,11 @@ Position2d Odometry::getPos() {
 
 void Odometry::reset(Position2d pos) {
     this->pos = pos;
+}
+void Odometry::reset() {
+    pos.x = 0;
+    pos.y = 0;
+    pos.yaw = 0;
 }
 
 /*

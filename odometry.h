@@ -11,8 +11,10 @@
 class Odometry {
 public:
     Odometry();
-    void update(double linear, double angular,double time = 0);
+    void update(double linear, double angular);
+    void updateSim(double linear, double angular,double linearVel, double angularVel);
     void reset(Position2d pos);
+    void reset();
     double getX();
     double getY();
     double getYaw();
