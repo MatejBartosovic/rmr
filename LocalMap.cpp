@@ -69,8 +69,6 @@ gettimeofday(&tp, NULL);
 if(scan.numberOfScans <0)
         return;
     resetLastMap();
-    printf("locking\n");
-    //mapLock.lock();
     for (int i = 0; i < scan.numberOfScans; i++) {
 	if(scan.Data[i].scanDistance <10)
 		continue;
@@ -80,7 +78,7 @@ if(scan.numberOfScans <0)
 		continue;
 	QPoint obstacle(y,x);
         map.setPixel(obstacle,qRgb(0,0,0));
-        printf("x= %d y = %d\ndistance %lf angle = %lf\n",x,y, scan.Data[i].scanDistance,scan.Data[i].scanAngle);
+        //printf("x= %d y = %d\ndistance %lf angle = %lf\n",x,y, scan.Data[i].scanDistance,scan.Data[i].scanAngle);
         lastMap.push_back(obstacle);
     }
     printf("unlocking\n");

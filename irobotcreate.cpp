@@ -82,11 +82,11 @@ int iRobotCreate::dataProcess(void *param, ProcessDataFromCreate callback)
 
 void iRobotCreate::doSensorReadings(void *param, ProcessDataFromCreate callback)
 {
-    std::chrono::high_resolution_clock::time_point begin;
-    std::chrono::high_resolution_clock::time_point end;
+    double begin;
+    double end;
     while(1)
     {
-        begin = std::chrono::high_resolution_clock::now();
+        begin = std::chrono::high_resolution_clock::now().time_since_epoch().count();
         CreateSensors sensor_struct;
         //printf("vlakno\n");
         SentToCreate(OI_SENSORS,(unsigned char)0x06);
@@ -104,11 +104,12 @@ void iRobotCreate::doSensorReadings(void *param, ProcessDataFromCreate callback)
         {
             printf("pruser %i\n",k);
         }
-        end = std::chrono::high_resolution_clock::now();
-        uint32_t toSleep = 110000000- (end-begin).count();
-	printf("to sleep %d rozdiel; %d\n",toSleep,(end-begin).count());
-        if(toSleep > 0)
-            std::this_thread::sleep_for(std::chrono::milliseconds(toSleep));
+        end = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+        double dif = 110 - (end-begin)/1000000;
+        if(dif > 0){
+            printf("Sleeping for %lf\n",dif);
+            std::this_thread::sleep_for(std::chrono::milliseconds((int)dif));
+        }
     }
 }
 
