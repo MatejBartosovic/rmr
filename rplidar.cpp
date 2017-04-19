@@ -126,8 +126,8 @@ int rplidar::stop()
     stopMeasurement=1;
     pthread_join(threadHandle,NULL);
     char request[]={0xa5, 0x25};
-   // int Pocet=0;
-    write(hCom,&request,2);
+    int Pocet=0;
+    Pocet=write(hCom,&request,2);
 
     usleep(2000);
     //tu treba vycitat buffer
@@ -146,7 +146,6 @@ LaserMeasurement rplidar::getMeasurement()
         tempL.numberOfScans=-3;
         return tempL;
     }
-
     if(WasEnabled==0)
     {
         tempL.numberOfScans=-2;
@@ -183,7 +182,7 @@ Start:
     char vystup[2000];
     Pocet=read(hCom,&vystup,2000);
     printf("premazane %i\n",Pocet);
-    if(Pocet==-1 || Pocet==2000)
+    if(Pocet==-1)
     {
         Pocet=read(hCom,&vystup,2000);
         printf("premazane2 %i\n",Pocet);
@@ -217,7 +216,7 @@ Start:
     if((dataR[0]!=0xa5)&&(dataR[1]!=0x5a))
     {
         printf("dostali sme tolkoto a je to zle %i,chyba %i\n",Pocet,error);
-        printf("nieco je zle, prve vratene byty nesuhlasia s odpovedou vo funkcii measure() %x %x %x %x %x %x %x\n",dataR[0],dataR[1],dataR[2],dataR[3],dataR[4],dataR[5],dataR[6]);
+        printf("nieco je zle, prve vratene byty nesuhlasia s odpovedou vo funkcii measure() %x %x %x %x %x %x %x %x\n",dataR[0],dataR[1],dataR[2],dataR[3],dataR[4],dataR[5],dataR[6]);
         goto Start;//stopMeasurement=1;
         return -1;
     }

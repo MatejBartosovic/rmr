@@ -8,8 +8,8 @@ LocalPlanner::LocalPlanner(Command &cmd, double angularStep, double stepCount, d
                                                                                                 linearP(linearP),
                                                                                                 angularStep(angularStep),
                                                                                                 stepCount(stepCount),
-                                                                                                simTime(1),
-                                                                                                flors(3){
+                                                                                                simTime(0.1),
+                                                                                                flors(5){
 
 }
 
@@ -89,7 +89,6 @@ bool LocalPlanner::update(Position2d pos) {
                 //printf("odstacle distance = %lf target distance = %lf\n",obstacleDistance,d);
             }
         }
-
         int lastRow = trajectoryFlors.size()-1;
         std::vector<double> costs(trajectoryFlors[lastRow].size());
         costs.clear();
@@ -104,7 +103,6 @@ bool LocalPlanner::update(Position2d pos) {
             }
             costs.push_back(cost);
         }
-
         //chose the best trajectory
         std::vector<double>::iterator minElement = std::min_element(costs.begin(),costs.end());
         std::vector<trajectoryPoint*> trajectory(flors+1);
