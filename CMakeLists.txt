@@ -10,6 +10,7 @@ set ( SOURCES
         positionRegulator2dLinear.cpp
         LimitInterface.cpp
         LocalMap.cpp
+        GlobalMap.cpp
         LocalPlanner.cpp
         rplidar.cpp)
 
@@ -25,6 +26,7 @@ set ( MY_HEADERS
         LimitInterface.h
         LocalMap.h
         LocalPlanner.h
+        GlobalMap.h
         rplidar.h)
 
 set ( UIS
@@ -62,7 +64,8 @@ add_executable(${PROJECT_NAME}  main.cpp
 
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE MAP)
-target_compile_definitions(${PROJECT_NAME} PRIVATE REAL_ROBOT)
+#target_compile_definitions(${PROJECT_NAME} PRIVATE LIDAR)
+#target_compile_definitions(${PROJECT_NAME} PRIVATE REAL_ROBOT)
 
 
 target_link_libraries(  ${PROJECT_NAME} ${QT_LIBRARIES}

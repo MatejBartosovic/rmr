@@ -4,9 +4,9 @@
 
 #include "LocalMap.h"
 
-LocalMap::LocalMap(int sizeX, int sizeY, double resolution) :
+LocalMap::LocalMap(int sizeX, int sizeY, double resolution,LaserMeasurement &scan) :
         resolution(resolution), xSquares(sizeX/resolution), ySquares(sizeY/resolution),
-        xSquares_2(xSquares>>1), ySquares_2(ySquares>>1),map(xSquares,ySquares,QImage::Format_RGB32) {
+        xSquares_2(xSquares>>1), ySquares_2(ySquares>>1),map(xSquares,ySquares,QImage::Format_RGB32),scan(scan) {
     for (int i = 0; i < map.width(); i++)
         for (int j = 0; j < map.height(); j++)
             map.setPixel(i,j,qRgb(255, 255, 255));
@@ -15,11 +15,6 @@ LocalMap::LocalMap(int sizeX, int sizeY, double resolution) :
 }
 
 void LocalMap::start() {
-#ifdef LIDAR
-    lidar.connect("/dev/laser");
-    lidar.enable();
-    lidar.start();
-#endif
     QThread::start();
     timer->start(1000);
 }
@@ -29,6 +24,18 @@ void LocalMap::run() {
         std::unique_lock<std::mutex> lock(mapLock);
         updateCondition.wait(lock); //vat to new position
         buildMap();
+        globalUpdateCondition.notify_all();
+    }
+}
+
+void LocalMap::globalMapRun(){
+    while (true){
+        std::unique_lock<std::mutex> lock(mapLock);
+        globalUpdateCondition.wait(lock); //vat to new position
+        LaserMeasurement a = scan;
+        lock.unlock();
+        buildGlobalMap(a);
+
     }
 }
 
@@ -46,7 +53,6 @@ void LocalMap::update(){
 }
 
 void LocalMap::stop() {
-    lidar.stop();
     QThread::quit();
 }
 
@@ -64,7 +70,6 @@ void LocalMap::buildMap() {
 
     //resetLastMap();
 #ifdef LIDAR
-    LaserMeasurement scan = lidar.getMeasurement();
 struct timeval tp;
 gettimeofday(&tp, NULL);
 
@@ -100,6 +105,11 @@ if(scan.numberOfScans <0)
 #endif
     //printf("emitting !!!!!!!!!!!!!!!!!!!!!!!!!!\n");
     emit(newMap());
+}
+
+void LocalMap::buildGlobalMap(LaserMeasurement otherScan) {
+
+
 }
 
 void LocalMap::resetLastMap() {

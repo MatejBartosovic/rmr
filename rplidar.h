@@ -9,6 +9,8 @@
 //// treba ratat s tym,ze niesu osetrene chybove stavy zariadenia
 ////*************************************************************************************
 ////*************************************************************************************
+#ifndef eeee
+#define eeee
 #include <stdio.h>
 #include <stdlib.h>
 #include "unistd.h"
@@ -117,3 +119,5 @@ private:
     }
 
 };
+
+#endif

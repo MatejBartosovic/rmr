@@ -3,7 +3,8 @@
 //
 #include "LocalPlanner.h"
 
-LocalPlanner::LocalPlanner(Command &cmd, double angularStep, double stepCount, double linearP) : LocalMap(6,6,0.1),
+LocalPlanner::LocalPlanner(Command &cmd, double angularStep, double stepCount, double linearP) : LocalMap(6,6,0.1,scan),
+                                                                                                 globalMap(6,6,0.1,scan),
                                                                                                 Regulator(cmd),
                                                                                                 linearP(linearP),
                                                                                                 angularStep(angularStep),
@@ -14,14 +15,22 @@ LocalPlanner::LocalPlanner(Command &cmd, double angularStep, double stepCount, d
 }
 
 void LocalPlanner::start() {
+#ifdef LIDAR
+    lidar.connect("/dev/laser");
+    lidar.enable();
+    lidar.start();
+#endif
     LocalMap::start();
+    globalMap.start();
 }
 
 bool LocalPlanner::update(Position2d pos) {
     //printf("update local plnner !!!!!!!!!!!!!!!!!!!!!!!!!!\n");
 #ifdef MAP
     #ifdef LIDAR
+    scan = lidar.getMeasurement();
     LocalMap::update();
+    globalMap.update();
     #else
     LocalMap::update(pos);
     #endif

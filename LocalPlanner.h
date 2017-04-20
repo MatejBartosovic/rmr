@@ -6,6 +6,7 @@
 #define ROBOT_DEMO_LOCALPLANNER_H
 
 #include "LocalMap.h"
+#include "GlobalMap.h"
 #include "regulator.h"
 #include "odometry.h"
 
@@ -38,7 +39,9 @@ private:
     int flors;
     double linearP;
     Odometry odometry;
-
+    LaserMeasurement scan;
+    GlobalMap globalMap;
+    rplidar lidar;
 };
 
 
