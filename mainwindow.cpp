@@ -41,6 +41,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->setNewGoalButton,SIGNAL(clicked()),this,SLOT(setNewGoal()));
     connect(ui->cancelGoalButton,SIGNAL(clicked()),this,SLOT(cancelGoal()));
     connect(&localPlaner,SIGNAL(newMap()),this,SLOT(drawMap()));
+    connect(&localPlaner.globalMap,SIGNAL(newMap()),this,SLOT(drawGlobalMap()));
 
 
 }
@@ -140,4 +141,8 @@ void MainWindow::cancelGoal(){
 
 void MainWindow::drawMap(){
     ui->local_map->setPixmap(QPixmap::fromImage(localPlaner.getMap().scaled(400,400,Qt::KeepAspectRatio)));
+}
+
+void MainWindow::drawGlobalMap(){
+    ui->globalMap->setPixmap(QPixmap::fromImage(localPlaner.globalMap.getMap().scaled(400,400,Qt::KeepAspectRatio)));
 }

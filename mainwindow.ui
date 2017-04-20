@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>324</height>
+    <height>370</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -97,7 +97,7 @@
     <item>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
-       <widget class="QLabel" name="label_8">
+       <widget class="QLabel" name="asdf">
         <property name="text">
          <string>X</string>
         </property>
@@ -167,6 +167,13 @@
       </property>
      </widget>
     </item>
+    <item>
+     <widget class="QLabel" name="globalMap">
+      <property name="text">
+       <string>TextLabel</string>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -175,7 +182,7 @@
      <x>0</x>
      <y>0</y>
      <width>400</width>
-     <height>25</height>
+     <height>27</height>
     </rect>
    </property>
   </widget>

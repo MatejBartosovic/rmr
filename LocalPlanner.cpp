@@ -30,7 +30,7 @@ bool LocalPlanner::update(Position2d pos) {
     #ifdef LIDAR
     scan = lidar.getMeasurement();
     LocalMap::update();
-    globalMap.update();
+    globalMap.update(pos);
     #else
     LocalMap::update(pos);
     #endif

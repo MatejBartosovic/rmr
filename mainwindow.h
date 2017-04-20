@@ -44,6 +44,7 @@ private slots:
                 exit(-1);
             }
     void drawMap();
+    void drawGlobalMap();
 
 private:
     void runTest();

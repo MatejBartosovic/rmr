@@ -30,6 +30,7 @@ public:
     void setLinearP(double p);
     void start();
     bool update(Position2d pos);
+    GlobalMap globalMap;
 
 private:
     //parameters
@@ -40,7 +41,6 @@ private:
     double linearP;
     Odometry odometry;
     LaserMeasurement scan;
-    GlobalMap globalMap;
     rplidar lidar;
 };
 

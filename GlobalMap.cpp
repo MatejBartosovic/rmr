@@ -15,13 +15,34 @@ GlobalMap::GlobalMap(int sizeX, int sizeY, double resolution,LaserMeasurement &s
 
 void GlobalMap::start() {
     QThread::start();
-    timer->start(1000);
+    timer->start(5000);
 }
 
 void GlobalMap::timerUpdate(){
-
+    emit(newMap());
 }
 
 void GlobalMap::run() {
+    while(1){
+        std::unique_lock<std::mutex> lock(mapLock);
+        updateCondition.wait(lock);
+        data = scan; //data zo skenera
+        lock.unlock();
+        buildMap();
+    }
+}
 
+void GlobalMap::update(Position2d pos){
+    this->pos = pos;
+    updateCondition.notify_all();
+}
+
+void GlobalMap::buildMap(){
+
+
+}
+
+QImage GlobalMap::getMap(){
+    std::lock_guard<std::mutex> lock(mapLock);
+    return map;
 }

@@ -23,7 +23,6 @@ public:
     void update(Position2d pos);
     void update();
     void run();
-    void globalMapRun();
     void stop();
     QImage getMap();
     ~LocalMap();
@@ -38,8 +37,6 @@ private:
 protected:
     std::mutex mapLock;
     std::condition_variable updateCondition;
-    std::mutex globalMapLock;
-    std::condition_variable globalUpdateCondition;
     int xSquares;
     int ySquares;
     int xSquares_2;

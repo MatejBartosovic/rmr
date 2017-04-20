@@ -24,20 +24,9 @@ void LocalMap::run() {
         std::unique_lock<std::mutex> lock(mapLock);
         updateCondition.wait(lock); //vat to new position
         buildMap();
-        globalUpdateCondition.notify_all();
-    }
+      }
 }
 
-void LocalMap::globalMapRun(){
-    while (true){
-        std::unique_lock<std::mutex> lock(mapLock);
-        globalUpdateCondition.wait(lock); //vat to new position
-        LaserMeasurement a = scan;
-        lock.unlock();
-        buildGlobalMap(a);
-
-    }
-}
 
 void LocalMap::update(Position2d pos){
     {
@@ -71,7 +60,7 @@ void LocalMap::buildMap() {
     //resetLastMap();
 #ifdef LIDAR
 struct timeval tp;
-gettimeofday(&tp, NULL);
+//gettimeofday(&tp, NULL);
 
     printf("mam %d bodov sec = %d usec = %d\n",scan.numberOfScans,tp.tv_sec,tp.tv_usec);
 if(scan.numberOfScans <0)
