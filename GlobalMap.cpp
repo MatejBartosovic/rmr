@@ -38,7 +38,18 @@ void GlobalMap::update(Position2d pos){
 }
 
 void GlobalMap::buildMap(){
-
+    if(data.numberOfScans <0)
+        return;
+    for (int i = 0; i < data.numberOfScans; i++) {
+        if(data.Data[i].scanDistance <5)
+            continue;
+        int x = (int)(cos(data.Data[i].scanAngle/180*M_PI + pos.yaw)*data.Data[i].scanDistance/100/resolution*1.45) +pos.x/resolution;
+        int y = (int)(sin(data.Data[i].scanAngle/180*M_PI + pos.yaw)*data.Data[i].scanDistance/100/resolution*1.45) +pos.y/resolution;
+        if(x>xSquares || y > ySquares)
+            continue;
+        QPoint obstacle(y,x);
+        map.setPixel(obstacle,qRgb(0,0,0));
+    }
 
 }
 

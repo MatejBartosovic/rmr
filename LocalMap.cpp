@@ -170,4 +170,13 @@ double LocalMap::getObstacleDistance(Position2d otherPos, QImage &otherMap) {
 
 void LocalMap::timerUpdate(){
     emit(newMap());
+    for (int i = 0; i < lastPath.size(); i++) {
+        map.setPixel(lastPath[i],qRgb(255, 255,255));
+    }
 }
+
+void LocalMap::setPathPoint(QPoint point) {
+    lastPath.push_back(QPoint(ySquares_2 + point.y(), xSquares_2-point.x()));
+    map.setPixel(lastPath.back(),qRgb(0,255,0));
+}
+

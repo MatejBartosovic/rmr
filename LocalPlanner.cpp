@@ -3,14 +3,14 @@
 //
 #include "LocalPlanner.h"
 
-LocalPlanner::LocalPlanner(Command &cmd, double angularStep, double stepCount, double linearP) : LocalMap(6,6,0.1,scan),
+LocalPlanner::LocalPlanner(Command &cmd, double angularStep, double stepCount, double linearP) : localMap(4,4,0.05,scan),
                                                                                                  globalMap(6,6,0.1,scan),
                                                                                                 Regulator(cmd),
                                                                                                 linearP(linearP),
                                                                                                 angularStep(angularStep),
                                                                                                 stepCount(stepCount),
-                                                                                                simTime(0.1),
-                                                                                                flors(5){
+                                                                                                simTime(0.3),
+                                                                                                flors(4){
 
 }
 
@@ -20,7 +20,7 @@ void LocalPlanner::start() {
     lidar.enable();
     lidar.start();
 #endif
-    LocalMap::start();
+    localMap.start();
     globalMap.start();
 }
 
@@ -29,36 +29,25 @@ bool LocalPlanner::update(Position2d pos) {
 #ifdef MAP
     #ifdef LIDAR
     scan = lidar.getMeasurement();
-    LocalMap::update();
+    localMap.update();
     globalMap.update(pos);
     #else
-    LocalMap::update(pos);
+    localMap.update(pos);
     #endif
 #endif
     if(goalActive) {
-        double Ex = goal.x - pos.x;
-        double Ey = goal.y - pos.y;
-        double Elinear = sqrt(pow(Ex, 2) + pow(Ey, 2));
-
-        if(Elinear < 0.05){
+        double vel = getLinearVel(pos);
+        if (vel==0){
             printf("~~~~~~~~~TARGET POSITION REACHED~~~~~~~~~~~~~~\n");
-            printf("linear error = %lf\n",Elinear);
-            cancelGoal();
-            return  true;
+            Regulator::cancelGoal();
+            return false;
         }
-        double vel = 0.5 * Elinear;
-        if (vel > 0.3)
-            vel = 0.3;
-        if (vel < -0.3)
-            vel = -0.3;
-
         //generate trajectories tree
         double distance = simTime * vel;
         std::vector<std::vector<trajectoryPoint>> trajectoryFlors(flors);
         trajectoryFlors.clear();
 
         std::vector<trajectoryPoint> currentTrajectoryPositions;
-        printf("robot ide %lf %lf\n",pos.vel.linear,pos.vel.angular);
         currentTrajectoryPositions.push_back(trajectoryPoint(Position2d(),pos.vel,NULL));
 
         trajectoryFlors.push_back(currentTrajectoryPositions);
@@ -68,10 +57,10 @@ bool LocalPlanner::update(Position2d pos) {
             for (int j = 0; j < trajectoryFlors[i].size(); j++) {
                 for (int k = -stepCount; k <= stepCount; k++) {
                     odometry.reset(trajectoryFlors[i][j].pos);
-                    double angularVel = (trajectoryFlors[i][j].vel.angular +  k * angularStep);
-                    printf("sucasna rychlost %lf %lf",trajectoryFlors[i][j].vel.linear,trajectoryFlors[i][j].vel.angular);
-                    odometry.update(distance, angularVel*simTime);
-                    printf("trajectory generation vel = %lf %lf\n",vel,angularVel);
+                    double angularVel = (trajectoryFlors[i][j].vel.angular +  (k * angularStep));
+                    double linearVel = getLinearVel(trajectoryFlors[i][j].pos);
+                    //printf("sucasna rychlost %lf %lf k = %d\n",linearVel,angularVel,k);
+                    odometry.update(linearVel*simTime, angularVel*simTime);
                     currentTrajectoryPositions.push_back(trajectoryPoint(odometry.getPos(), Velocity(vel,angularVel),&trajectoryFlors[i][j]));
                 }
             }
@@ -80,21 +69,43 @@ bool LocalPlanner::update(Position2d pos) {
         }
 
         //get map
-        QImage otherMap = LocalMap::getMap();
-
+        QImage otherMap = localMap.getMap();
+        if(localMap.getObstacleDistance(Position2d(),otherMap)<0.2){
+            printf("hmm skoro som nabural\n");
+            Regulator::cancelGoal();
+            return false;
+        }
         //calculate distance and cost for each trajectory point
+        printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
         for (int i = 1; i < trajectoryFlors.size(); i++) {
             for (int j = 0; j < trajectoryFlors[i].size() ; j++) {
-                double obstacleDistance = getObstacleDistance(trajectoryFlors[i][j].pos,otherMap);
-                double td = sqrt(pow(goal.x -trajectoryFlors[i][j].pos.x,2)+pow(goal.y - trajectoryFlors[i][j].pos.y,2));
-                if(obstacleDistance > 2)
-                    trajectoryFlors[i][j].cost = td;
-                else if(obstacleDistance < 0.2){
-                    cancelGoal();
-                    printf("hmm skoro som nabural\n goal cancelled\n");
+                trajectoryFlors[i][j].cost = 0;
+                double obstacleDistance = localMap.getObstacleDistance(trajectoryFlors[i][j].pos,otherMap);
+                double td = sqrt(pow(goal.x - (trajectoryFlors[i][j].pos.x*cos(trajectoryFlors[i][j].pos.yaw) + pos.x),2)+ pow(goal.y - (trajectoryFlors[i][j].pos.y*sin(trajectoryFlors[i][j].pos.yaw)+pos.y),2));
+                //printf("robot pos %lf %lf ",pos.x,pos.y);
+                //printf("pint pos %lf %lf %lf ",trajectoryFlors[i][j].pos.x,trajectoryFlors[i][j].pos.y,trajectoryFlors[i][j].pos.yaw);
+
+                if(obstacleDistance > 2){
+                    //printf("td = %lf\n",td);
+                    if(i==trajectoryFlors.size()-1){
+                        //trajectoryFlors[i][j].tdCost = 25*exp(td);
+                        trajectoryFlors[i][j].tdCost = td;
+                        trajectoryFlors[i][j].cost += trajectoryFlors[i][j].tdCost;
+                    }
+                    //printf("priamo %lf\n",td);
                 }
-                else
-                    trajectoryFlors[i][j].cost = exp(0.3/obstacleDistance) + td ;
+                /*else if(obstacleDistance < 0.3){
+                    trajectoryFlors[i][j].obstacleCost = 10000000;
+                    trajectoryFlors[i][j].cost += trajectoryFlors[i][j].obstacleCost;
+                }*/
+                else {
+                    //printf("obstace\n");
+                    trajectoryFlors[i][j].obstacleCost = exp(0.5 / obstacleDistance);
+                    trajectoryFlors[i][j].cost +=  trajectoryFlors[i][j].obstacleCost;
+                    trajectoryFlors[i][j].tdCost = td;
+                    trajectoryFlors[i][j].cost +=trajectoryFlors[i][j].tdCost;
+                    //printf("blizko prekazky td = %lf exp = %lf\n",td,exp(0.3 / obstacleDistance)/10);
+                }
                 //printf("odstacle distance = %lf target distance = %lf\n",obstacleDistance,d);
             }
         }
@@ -110,26 +121,48 @@ bool LocalPlanner::update(Position2d pos) {
                 cost +=currentTrajectoryPoint->cost;
                 currentTrajectoryPoint = currentTrajectoryPoint->parrent;
             }
+            printf("%lf ",cost);
             costs.push_back(cost);
         }
+        printf("\n");
         //chose the best trajectory
         std::vector<double>::iterator minElement = std::min_element(costs.begin(),costs.end());
         std::vector<trajectoryPoint*> trajectory(flors+1);
+        trajectory.clear();
 
         trajectoryPoint* point = &trajectoryFlors.back()[std::distance(costs.begin(), minElement)];
+        printf("trajectory:\n");
         while(point){
             trajectory.push_back(point);
+            localMap.setPathPoint(QPoint(trajectory.back()->pos.x/localMap.resolution,trajectory.back()->pos.y/localMap.resolution));
+            //printf("x = %lf y = %lf\n",point->pos.x,point->pos.y);
             point = point->parrent;
         }
-
         cmd.linear = trajectory[trajectory.size()- 2]->vel.linear;
         cmd.angular = trajectory[trajectory.size()- 2]->vel.angular;
         cmd.commandType = Command::Motors;
-        printf("minimum %lf vel = %lf %lf\n",*minElement,cmd.linear,cmd.angular);
+        printf("trajectory linear = %lf angular = %lf cost = %lf obstacle cost %lf distance cost =%lf\n",cmd.linear,cmd.angular,*minElement,trajectory[trajectory.size()- 2]->obstacleCost,trajectory[trajectory.size()- 2]->tdCost);
     }
 }
 
 void LocalPlanner::setLinearP(double p) {
     linearP = p;
+}
+
+double LocalPlanner::getLinearVel(Position2d p) {
+    double Ex = goal.x - p.x;
+    double Ey = goal.y - p.y;
+    double Elinear = sqrt(pow(Ex, 2) + pow(Ey, 2));
+    if(Elinear < 0.05){
+        printf("~~~~~~~~~TARGET POSITION REACHED~~~~~~~~~~~~~~\n");
+        printf("linear error = %lf\n",Elinear);
+        return  0;
+    }
+    double vel = 0.5 * Elinear;
+    if (vel > 0.3)
+        vel = 0.3;
+    if (vel < -0.3)
+        vel = -0.3;
+    return  vel;
 }
 

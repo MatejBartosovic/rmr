@@ -40,7 +40,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->setNewGoalButton,SIGNAL(clicked()),this,SLOT(setNewGoal()));
     connect(ui->cancelGoalButton,SIGNAL(clicked()),this,SLOT(cancelGoal()));
-    connect(&localPlaner,SIGNAL(newMap()),this,SLOT(drawMap()));
+    connect(&localPlaner.localMap,SIGNAL(newMap()),this,SLOT(drawMap()));
     connect(&localPlaner.globalMap,SIGNAL(newMap()),this,SLOT(drawGlobalMap()));
 
 
@@ -130,7 +130,7 @@ void MainWindow::setLinearP(double p){
 
 void MainWindow::setNewGoal(){
     //regulator2d.setGoal(Position2d(ui->XSpinBox->value(),ui->YSpinBox->value(),0));
-    usleep(100000);
+    //usleep(100000);
     localPlaner.setGoal(Position2d(ui->XSpinBox->value(),ui->YSpinBox->value(),0));
 }
 
@@ -140,7 +140,7 @@ void MainWindow::cancelGoal(){
 }
 
 void MainWindow::drawMap(){
-    ui->local_map->setPixmap(QPixmap::fromImage(localPlaner.getMap().scaled(400,400,Qt::KeepAspectRatio)));
+    ui->local_map->setPixmap(QPixmap::fromImage(localPlaner.localMap.getMap().scaled(400,400,Qt::KeepAspectRatio)));
 }
 
 void MainWindow::drawGlobalMap(){

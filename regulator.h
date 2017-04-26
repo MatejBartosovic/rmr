@@ -6,6 +6,7 @@
 #define ROBOT_DEMO_REGULATOR_H
 
 #include "types.h"
+#include <stdio.h>
 
 class Regulator {
 public:
@@ -13,6 +14,7 @@ public:
     virtual void setGoal(Position2d goal){
         this->goal = goal;
         goalActive = true;
+        printf("setting new goal\n");
     }
     virtual void cancelGoal(){
         cmd.linear = 0;
@@ -21,6 +23,7 @@ public:
         cmd.rightVel = 0;
         cmd.commandType = Command::Motors;
         goalActive = false;
+        printf("goal cancalled\n");
     }
     virtual bool update(Position2d currentPos) = 0;
     bool isGoalActive(){
